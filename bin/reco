@@ -1,0 +1,35 @@
+#!/bin/bash
+export WORKING="/software/data/factory/working"
+export RECOLLECTIONS="/software/data/factory/recollections"
+usage(){
+    echo "Usage: reco commit <directory_under_working>"
+    exit 1;
+}
+
+case "$1" in
+    commit)
+        COMMIT_DIR=$2
+        shift 2;
+        if [ -z "${COMMIT_DIR}" ];then usage; fi
+        if [ ! -d "${WORKING}/${COMMIT_DIR}" ];then
+            echo "could not find directory: ${WORKING}/${COMMIT_DIR}"
+            exit 1;
+        fi
+        export FULL_PATH=$(cd ${WORKING}/${COMMIT_DIR}; pwd)
+        ( cd ${WORKING}/${COMMIT_DIR}; createrepo -C . )
+        export COMMIT_HASH=$(cd ${WORKING}/${COMMIT_DIR}; find * -type f -exec sha1sum {} \;| sha1sum|awk '{print $1}')
+        REPO_BASENAME=$(basename ${FULL_PATH})
+        if [ ! -d "${RECOLLECTIONS}/${REPO_BASENAME}" ]; 
+            then mkdir -p "${RECOLLECTIONS}/${REPO_BASENAME}"
+        fi 
+        rsync -qaP --link-dest=${FULL_PATH}/ ${FULL_PATH}/ ${RECOLLECTIONS}/${REPO_BASENAME}/${COMMIT_HASH}/
+        (cd ${RECOLLECTIONS}/${REPO_BASENAME}; if [ -h "HEAD" ]; then unlink "HEAD"; fi)
+        (cd ${RECOLLECTIONS}/${REPO_BASENAME}; ln -s ${COMMIT_HASH} HEAD)
+        (cd ${RECOLLECTIONS}/${REPO_BASENAME}; chown -R www-data:www-data ${COMMIT_HASH} HEAD)
+        echo "HEAD -> ${COMMIT_HASH}"
+        exit 0;
+    ;;
+    *)
+    usage
+    ;;
+esac

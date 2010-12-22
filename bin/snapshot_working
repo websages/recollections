@@ -1,0 +1,47 @@
+#!/bin/bash
+export PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+WORKING=/software/data/factory/working
+DATA_CAS=/software/data/factory/data_cas
+
+flink(){
+    n="$1";
+    while [ -L ${n} ]; do
+        LINK_DIR=$(dirname ${n})
+        LINK_BASE=$(basename ${n})
+        echo -n "${LINK_BASE} -> ";
+        cd "${LINK_DIR}"; n=$(ls -l ${n}| awk '{print $NF}')
+    done;
+    echo ${n}
+}
+
+dir_from_latest(){
+    LATEST_LINK=$1;
+    LINKDIR=$(cd $(dirname ${LATEST_LINK}) ; pwd );
+    REL_LINK=$(flink ${LATEST_LINK} | awk '{print $NF}')
+    BASE_LINK=$(basename ${REL_LINK})
+    REL_DIR=$(dirname "${LINKDIR}/${REL_LINK}")
+    ABS_DIR=$(cd "${REL_DIR}";pwd)
+    echo "${ABS_DIR}/${BASE_LINK}"
+}
+
+clone_from(){
+    TOBECLONED=$1
+    BASEDIR=$(cd $(dirname ${TOBECLONED});pwd)
+    BASENAME=$(basename ${TOBECLONED})
+    CLONEDIR=$(mktemp -d ${BASEDIR}/${BASENAME}.clone.XXXX)
+    rsync -aqzPH --link-dest "${TOBECLONED}/" "${TOBECLONED}/" "${CLONEDIR}/"
+    STATUS=$?
+    echo "${CLONEDIR}"
+}
+
+TARGET=$1
+echo ${TARGET}
+if [ -h "${WORKING}/${TARGET}/latest" ]; then
+    SOURCE=$( dir_from_latest "${WORKING}/${TARGET}/latest") 
+    SRC_DIR=$(dirname ${SOURCE})
+    CLONE=$(clone_from ${SOURCE})
+    DATE=$(echo "obase=16; ibase=10;$(date +'%s')"|bc)
+    mv ${CLONE} "${SRC_DIR}/${DATE}"
+    unlink "${WORKING}/${TARGET}/latest"
+    (cd ${SRC_DIR}; ln -s ${DATE} latest);
+fi

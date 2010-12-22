@@ -1,0 +1,111 @@
+#!/bin/bash
+FACTORY="/software/data/factory/"
+UPSTREAM="${FACTORY}/upstream"
+UNATTENDED="${UPSTREAM}/unattended"
+VERSION="4.9"
+
+# Where to find some sources
+BASE_PACKAGES="unattended-${VERSION}.zip unattended-${VERSION}-dosboot.zip unattended-${VERSION}-linuxboot.zip"
+BASE_PACKAGES_URI="http://prdownloads.sourceforge.net/unattended"
+DJGPP_PACKAGES="djdev203.zip csdpmi5b.zip perl561b.zip pico396b.zip"
+DJGPP_PACKAGES_URI="http://www.delorie.com/pub/djgpp/current/v2apps/"
+
+################################################################################
+# subroutines
+#
+flink(){
+    n="$1";
+    while [ -L ${n} ]; do
+        LINK_DIR=$(dirname ${n})
+        LINK_BASE=$(basename ${n})
+        echo -n "${LINK_BASE} -> ";
+        cd "${LINK_DIR}"; n=$(ls -l ${n}| awk '{print $NF}')
+    done;
+    echo ${n}
+}
+
+dir_from_latest(){
+    LATEST_LINK=$1;
+    LINKDIR=$(cd $(dirname ${LATEST_LINK}) ; pwd );
+    REL_LINK=$(flink ${LATEST_LINK} | awk '{print $NF}')
+    BASE_LINK=$(basename ${REL_LINK})
+    REL_DIR=$(dirname "${LINKDIR}/${REL_LINK}")
+    ABS_DIR=$(cd "${REL_DIR}";pwd)
+    echo "${ABS_DIR}/${BASE_LINK}"
+}
+
+clone_from(){
+    TOBECLONED=$1
+    BASEDIR=$(cd $(dirname ${TOBECLONED});pwd)
+    BASENAME=$(basename ${TOBECLONED})
+    CLONEDIR=$(mktemp -d ${BASEDIR}/${BASENAME}.clone.XXXX)
+    rsync -aqzPH --link-dest "${TOBECLONED}/" "${TOBECLONED}/" "${CLONEDIR}/"
+    STATUS=$?
+    echo "${CLONEDIR}"
+}
+
+################################################################################
+# Make our directory tree
+#
+for DIRECTORY in "${FACTORY}" "${UPSTREAM}" "${UNATTENDED}/${VERSION}" "${UPSTREAM}"; do
+    if [ ! -d "${DIRECTORY}" ]; then mkdir -p "${DIRECTORY}";fi
+done
+
+################################################################################
+# Create our workspace by cloning the last one or just making a new one
+#
+if [ -h ${UNATTENDED}/${VERSION}/latest ]; then
+    # Clone last
+    WORKSPC=$( clone_from $( dir_from_latest "${UNATTENDED}/${VERSION}/latest" ) )
+else
+    # Make new
+    WORKSPC=$(mktemp -d ${UNATTENDED}/${VERSION}/new.XXXX)
+    if [ ! -f "${WORKSPC}/files" ]; then mkdir -p "${WORKSPC}/files"; fi
+    if [ ! -f "${WORKSPC}/staging" ]; then mkdir -p "${WORKSPC}/staging"; fi
+    
+    ############################################################################
+    # download our files if they're not present
+    #
+    for PKG in `echo "${BASE_PACKAGES}"`; do 
+        if [ ! -f "${WORKSPC}/files/${PKG}" ];then 
+            (cd ${WORKSPC}/files; wget "${BASE_PACKAGES_URI}/${PKG}");
+        fi 
+    done
+    for PKG in `echo "${DJGPP_PACKAGES}"`; do 
+        if [ ! -f "${WORKSPC}/files/${PKG}" ];then 
+            (cd ${WORKSPC}/files; wget "${DJGPP_PACKAGES_URI}/${PKG}");
+        fi 
+    done
+
+    ############################################################################
+    # un-pack our files
+    #
+    ( cd ${WORKSPC}/staging; unzip ../files/unattended-${VERSION}.zip )
+    ( cd ${WORKSPC}/staging; unzip ../files/unattended-${VERSION}-dosboot.zip )
+    ( cd ${WORKSPC}/staging; unzip ../files/unattended-${VERSION}-linuxboot.zip ) # this has a duplicate file?
+    if [ ! -d "${WORKSPC}/staging/unattended-${VERSION}/install/djgpp" ];then
+        mkdir -p "${WORKSPC}/staging/unattended-${VERSION}/install/djgpp"
+    fi
+    for zipfile in `echo "${DJGPP_PACKAGES}"`; do 
+        ( cd ${WORKSPC}/staging/unattended-${VERSION}/install/djgpp; unzip -L ${WORKSPC}/files/${zipfile} )
+    done
+fi
+
+################################################################################
+# Update our scripts and prepare our sources (fetch them from the web)
+#
+( cd ${WORKSPC}/staging/unattended-${VERSION}; install/tools/script-update )
+( cd ${WORKSPC}/staging/unattended-${VERSION}; install/tools/prepare )
+
+################################################################################
+# close the repository
+#
+DATE=$(echo "obase=16; ibase=10;$(date +'%s')" | bc)
+mv ${WORKSPC} ${UNATTENDED}/${VERSION}/${DATE}
+if [ -h "${UNATTENDED}/${VERSION}/latest" ]; then unlink "${UNATTENDED}/${VERSION}/latest"; fi
+( cd "${UNATTENDED}/${VERSION}"; ln -s "${DATE}" latest )
+
+################################################################################
+# deduplicate
+#
+

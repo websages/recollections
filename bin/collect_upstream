@@ -1,0 +1,189 @@
+#!/bin/bash
+export PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+UPSTREAM=/software/data/factory/upstream
+DATA_CAS=/software/data/factory/data_cas
+if [ ! -d "${UPSTREAM}" ];then mkdir -p "${UPSTREAM}"; fi
+
+flink(){
+    n="$1";
+    while [ -L ${n} ]; do
+        LINK_DIR=$(dirname ${n})
+        LINK_BASE=$(basename ${n})
+        echo -n "${LINK_BASE} -> ";
+        cd "${LINK_DIR}"; n=$(ls -l ${n}| awk '{print $NF}')
+    done;
+    echo ${n}
+}
+
+dir_from_latest(){
+    LATEST_LINK=$1;
+    LINKDIR=$(cd $(dirname ${LATEST_LINK}) ; pwd );
+    REL_LINK=$(flink ${LATEST_LINK} | awk '{print $NF}')
+    BASE_LINK=$(basename ${REL_LINK})
+    REL_DIR=$(dirname "${LINKDIR}/${REL_LINK}")
+    ABS_DIR=$(cd "${REL_DIR}";pwd)
+    echo "${ABS_DIR}/${BASE_LINK}"
+}
+
+clone_from(){
+    TOBECLONED=$1
+    BASEDIR=$(cd $(dirname ${TOBECLONED});pwd)
+    BASENAME=$(basename ${TOBECLONED})
+    # see if there is already a clone dir and use it if available
+    EXISTING=$(cd ${BASEDIR}; ls -d ${BASENAME}.clone.???? 2>/dev/null) 
+    if [ ! -z "${EXISTING}" ]; then
+        CLONEDIR="${BASEDIR}/${EXISTING}"
+    else
+        CLONEDIR=$(mktemp -d ${BASEDIR}/${BASENAME}.clone.XXXX)
+        rsync -aqzPH --link-dest "${TOBECLONED}/" "${TOBECLONED}/" "${CLONEDIR}/"
+    fi
+    STATUS=$?
+    echo "${CLONEDIR}"
+}
+
+initialize_repository(){
+    echo  fixme
+}
+
+freshen_repository(){
+    SOURCE="$1"
+    TARGET="$2"
+    DONOTWANT="$3"
+    if [ ! -z "$4" ];then
+        MAXTRIES="$4"
+    else
+        MAXTRIES="3"
+    fi
+    if [ ! -d "${TARGET}" ];then mkdir -p "${TARGET}";fi
+    if [ -h ${TARGET}/latest ]; then
+        TEMPTGT=$( clone_from $( dir_from_latest "${TARGET}/latest" ) )
+        echo ${CLONE_DIR}
+    else
+        TEMPTGT=$(mktemp -d ${TARGET}/initial_collector.XXXX)
+    fi
+    TRY=0; STATUS=1;
+    # Try to rsync it ${MAXTRIES} times...
+    while [ ${TRY} -lt ${MAXTRIES} -a ${STATUS} -ne 0 ]; do
+        TRY=$(expr ${TRY} + 1)
+        rsync -rltHptgoDvzP --delete-after ${SOURCE}/ ${TEMPTGT}/ ${DONOTWANT}
+        STATUS=$?
+    done
+    # if we succeeded, create the new latest
+    DATE=$(echo "obase=16; ibase=10;$(date +'%s')" | bc)
+    if [ ${STATUS} -eq 0 ]; then
+        mv "${TEMPTGT}"  "${TARGET}/${DATE}"
+        if [ -h "${TARGET}/latest" ]; then unlink "${TARGET}/latest"; fi
+        (cd ${TARGET}; ln -s ${DATE} latest)
+        # deduplicate /*FIXME*/
+    else
+        # abort, but save it as bad, we might be able to recover it and save some bandwidth
+        mv "${TEMPTGT}"  "${TARGET}/${DATE}.failed_with_${STATUS}"
+    fi
+}
+
+case "$1" in 
+    debian)
+        ################################################################################
+        # debian-i386 
+        ################################################################################
+        SOURCE=rsync://ftp.us.debian.org/debian/
+        TARGET=${UPSTREAM}/debian/
+        if [ ! -d "${TARGET}" ];then mkdir -p "${TARGET}";fi
+        TEMPTGT=$( clone_from $( dir_from_latest "${TARGET}/latest" ) )
+        ###############################################################################
+        # DONOTWANT="alpha amd64 arm armel hppa hurd-i386 i386 ia64 kfreebsd-amd64 
+        #            kfreebsd-i386 m68k mips mipsel powerpc s390 sparc"
+        ###############################################################################
+        DONOTWANT="alpha amd64 arm armel hppa hurd-i386 kfreebsd-amd64 kfreebsd-i386 
+                   m68k mips mipsel powerpc s390 sparc"
+        exclude_by_arch(){
+            EXCLUDE='';
+            for arch in $*;do
+                EXCLUDE="${EXCLUDE} --exclude binary-${arch}"
+                EXCLUDE="${EXCLUDE} --exclude *_${arch}.deb"
+                EXCLUDE="${EXCLUDE} --exclude *_${arch}.udeb"
+                EXCLUDE="${EXCLUDE} --exclude installer-${arch}/"
+                EXCLUDE="${EXCLUDE} --exclude Contents-${arch}*"
+            done
+            echo ${EXCLUDE}
+        }
+        # The first stage must not delete any files and should exclude indexes
+        rsync -rltHptgoDvzP ${SOURCE}/ ${TEMPTGT}/ \
+              --exclude Packages* \
+              --exclude Sources* \
+              --exclude Release* \
+              --exclude ls-lR* \
+              $(exclude_by_arch ${DONOTWANT})
+        STATUS=$?
+        if [ ${STATUS} -eq 0 ]; then 
+            # The second stage should then transfer the above excluded files 
+            # and delete files that no longer belong on the mirror.
+            rsync -rltHptgoDvzP --delete-after \
+                  ${SOURCE}/ ${TEMPTGT}/ $(exclude_by_arch ${DONOTWANT})
+            STATUS=$?
+            DATE=$(echo "obase=16; ibase=10;$(date +'%s')" | bc)
+            if [ ${STATUS} -eq 0 ]; then 
+                mv "${TEMPTGT}"  "${TARGET}/${DATE}"
+                if [ -h "${TARGET}/latest" ];then unlink "${TARGET}/latest"; fi
+                (cd "${TARGET}"; ln -s "${DATE}" latest)
+                # deduplicate /*FIXME*/
+            else
+                mv "${TEMPTGT}"  "${TARGET}/${DATE}.stage_2.failed_with_${STATUS}"
+            fi
+        else
+            mv "${TEMPTGT}"  "${TARGET}/${DATE}.stage_1.failed_with_${STATUS}"
+        fi
+    ;;
+    dag|rpmforge)
+        SOURCE="rsync://rsync.gtlib.gatech.edu/RPMforge/"
+        EXCLUDE="*.sparc.rpm *.alpha.rpm aurora/* dries/* fedora/* redhat/6.2 redhat/7.3 redhat/8.0 redhat/9 redhat/el2.1 redhat/el3 redhat/el4 redhat/el5/en/ppc redhat/el5/en/x86_64"
+        TARGET="${UPSTREAM}/dag"
+        # rewrite the EXCLUDE LIST to the rsync --exclude format
+        DONOTWANT=""
+        for exclusion in $(echo ${EXCLUDE}) ;do 
+           DONOTWANT="${DONOTWANT} --exclude ${exclusion}"
+        done
+        freshen_repository "${SOURCE}" "${TARGET}" "${DONOTWANT}"
+    ;;
+    cygwin)
+        SOURCE="rsync://rsync.gtlib.gatech.edu/cygwin/"
+        TARGET="${UPSTREAM}/cygwin/"
+        freshen_repository "${SOURCE}" "${TARGET}" "${DONOTWANT}"
+    ;;
+    centos)
+        SOURCE="rsync://rsync.gtlib.gatech.edu/centos/"
+        EXCLUDE="2 2.* 3 3.* 4 4.*"
+        TARGET="${UPSTREAM}/centos/"
+        # rewrite the EXCLUDE LIST to the rsync --exclude format
+        DONOTWANT=""
+        for exclusion in $(echo ${EXCLUDE}) ;do 
+           DONOTWANT="${DONOTWANT} --exclude ${exclusion}"
+        done
+        freshen_repository "${SOURCE}" "${TARGET}" "${DONOTWANT}"
+    ;;
+    epel)
+        SOURCE="rsync://rsync.gtlib.gatech.edu/fedora-epel"
+        EXCLUDE="*.sparc.rpm *.alpha.rpm 4 4AS 4ES 4WS 5/i386/debug 5/x86_64 testing"
+        TARGET="${UPSTREAM}/epel"
+        # rewrite the EXCLUDE LIST to the rsync --exclude format
+        DONOTWANT=""
+        for exclusion in $(echo ${EXCLUDE}) ;do 
+           DONOTWANT="${DONOTWANT} --exclude ${exclusion}"
+        done
+        freshen_repository "${SOURCE}" "${TARGET}" "${DONOTWANT}"
+    ;;
+    fedora)
+        SOURCE="rsync://rsync.gtlib.gatech.edu/fedora-enchilada/linux/releases/"
+        EXCLUDE="7 8 9 10 11 12 13 test"
+        TARGET="${UPSTREAM}/fedora/"
+        # rewrite the EXCLUDE LIST to the rsync --exclude format
+        DONOTWANT=""
+        for exclusion in $(echo ${EXCLUDE}) ;do 
+           DONOTWANT="${DONOTWANT} --exclude ${exclusion}"
+        done
+        freshen_repository "${SOURCE}" "${TARGET}" "${DONOTWANT}"
+    ;;
+    *)
+        echo "$1 not implemented"
+    ;;
+esac

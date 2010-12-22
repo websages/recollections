@@ -1,0 +1,68 @@
+#!/bin/bash
+export BASEDIR="/software/data/factory"
+export CAS_DIR="${BASEDIR}/data_cas"
+export DUP_DIR="${BASEDIR}/recollections"
+export GIT_DIR="${BASEDIR}/data_idx"
+
+# The inode index keeps us from re-sha1sum'ing anything 
+# that shares an inode with something lin the CAS, as 
+# that would mean that it's already deduplicated
+INODE_INDEX=$(mktemp /tmp/inode_db.XXXX);
+(cd ${CAS_DIR} find * -type f )| while read line; do
+    inode=$(stat -c'%i' "${line}");
+    echo "${inode} ${line}";
+done > $TEMP
+
+
+# set up the git repository
+if [ ! -d "${GIT_DIR}" ]; then mkdir -p "${GIT_DIR}"; fi
+if [ ! -d "${GIT_DIR}/.git" ]; then 
+    echo "${GIT_DIR} is not a git repository"
+    exit 1;
+fi
+
+# deduplicate the files into CAS_DIR
+cd "${DUP_DIR}/"; find * -type f | while read line; do
+    line_inode=$(/usr/bin/stat -c %i "${line}")
+    LINE=$(grep "^${line_inode} " ${INODE_INDEX})
+    if [ $? -ne 0 ];then
+        SHA1SUM=$(sha1sum "${line}"|awk '{print $1}')
+        DIR0=$(echo ${SHA1SUM}|cut -b 1-4)
+        DIR1=$(echo ${SHA1SUM}|cut -b 5-8)
+        DIR2=$(echo ${SHA1SUM}|cut -b 9-12)
+        if [ ! -d "${CAS_DIR}/${DIR0}/${DIR1}/${DIR2}" ] ;then
+            mkdir -p "${CAS_DIR}/${DIR0}/${DIR1}/${DIR2}"
+        fi
+        if [ ! -f "${CAS_DIR}/${DIR0}/${DIR1}/${DIR2}/${SHA1SUM}" ]; then
+            ln "${line}" "${CAS_DIR}/${DIR0}/${DIR1}/${DIR2}/${SHA1SUM}"
+        else
+            # check to see if they're the same inode and if not, hard link them.
+            hash_inode=$(/usr/bin/stat -c %i "${CAS_DIR}/${DIR0}/${DIR1}/${DIR2}/${SHA1SUM}")
+            if [ "${line_inode}" != "${hash_inode}" ]; then
+                /bin/rm "${line}"
+                ln "${CAS_DIR}/${DIR0}/${DIR1}/${DIR2}/${SHA1SUM}" "${line}"
+                fi
+        fi
+    else
+        SHA1FILE=$(echo "${LINE}"|sed -e 's/[0-9]+ //')
+        SHA1SUM=$(basename "${SHA1FILE}")
+    fi
+    if [ -z "${SHA1SUM}" ];then
+        echo "No SHA1SUM for [${LINE}] that was grepped in ${INODE_INDEX}"
+        exit 1;
+    fi
+    # save the hashes in our git repository
+    DIR=$( dirname "${line}")
+    BASE=$( basename "${line}")
+    if [ ! -d "${GIT_DIR}/${DIR}" ]; then
+        mkdir -p "${GIT_DIR}/${DIR}" 
+    fi
+    # NEEDTOADD=0;
+    # if [ ! -f "${GIT_DIR}/${line}" ]; then NEEDTOADD=1;fi
+    echo "${line}"
+    echo "${SHA1SUM}" > "${GIT_DIR}/${line}"
+    # if [ ${NEEDTOADD} -eq 1 ]; then
+    #    ( cd "${GIT_DIR}" ; git add "${line}" )
+    # fi
+done
+

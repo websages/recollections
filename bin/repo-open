@@ -1,0 +1,4 @@
+#!/bin/bash
+UPSTREAM="$1"
+WORKING_TARGET="$2"
+echo "open a repo named ${WORKING_TARGET} in working, created from ${UPSTREAM}
