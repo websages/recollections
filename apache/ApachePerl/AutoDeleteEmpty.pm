@@ -2,7 +2,7 @@
 #
 # This is a PerlCleanupHandler that will, after any DELETE
 # requests, traverse the path for the file deleted
-# backwards and delete any empty directories
+# backwards and delete any empty directories 
 #
 ###########################################################
 package ApachePerl::AutoDeleteEmpty;

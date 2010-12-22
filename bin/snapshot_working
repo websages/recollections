@@ -1,4 +1,7 @@
 #!/bin/bash
+################################################################################
+# this doesn't really do anything, it's just and idea I've been kicking around
+################################################################################
 export PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 WORKING=/software/data/factory/working
 DATA_CAS=/software/data/factory/data_cas
