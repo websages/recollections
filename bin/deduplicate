@@ -1,4 +1,13 @@
 #!/bin/bash
+################################################################################
+# this script will sha1sum every file in $DUP_DIR and hard-link it to a file
+# under $CAS_DIR, named after the sha1sum, and then create a text file of the 
+# original filename in $DATA_IDX that only contains the hash of the file
+# 
+# $DATA_CAS and $DATA_IDX are used in conjunction to navigate the Content 
+# Addressable Storage (CAS) in human-readable form with the mod_rewrite external
+# script ../../apache/ApachePerl/Rewrite_Idx2Cas.pl
+################################################################################
 export BASEDIR="/software/data/factory"
 export CAS_DIR="${BASEDIR}/data_cas"
 export DUP_DIR="${BASEDIR}/recollections"

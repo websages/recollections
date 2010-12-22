@@ -1,4 +1,10 @@
 #!/bin/bash
+################################################################################
+#
+# We use unattended to auto-construct windows XP and windows 2k3 systems, 
+# this is a script that collects the unattended repository from upstream.
+#
+################################################################################
 FACTORY="/software/data/factory/"
 UPSTREAM="${FACTORY}/upstream"
 UNATTENDED="${UPSTREAM}/unattended"
