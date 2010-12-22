@@ -2,7 +2,9 @@
 Version control your package repository
 
 # Author
-James S White
+James S White 
+
+james at websages.com
 
 # License 
 
