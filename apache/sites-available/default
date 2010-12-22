@@ -1,0 +1,4 @@
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        Redirect temporary / https://packages.lab.example.org/
+</VirtualHost>
