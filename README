@@ -1,73 +1,23 @@
-#!!!!!!!!!!!!! DANGER !!!!!!!!!!!!!!!!!!!!!#
-# This code is just a proof-of-concept.  It needs a lot of work, and
-# probably converted to a dynamic language and not to suck in general.
-#
-# This all must be one filesystem (or a CAS-backed apache tree), as we use hard links to de-duplicate
-+ factory
-   + control   ( our scripts to mirror and assemble materials from source, and
-      |          build and index our product repositores, deploy hosts, and
-      |          run tests against the base installs. 
-      |          This is what will go in git and asemble the rest of the filesystem/CAS)
-      + bin
-   + data_cas  ( the place where we store sha1sums hardlinks (deduplication) )
-   + materials ( our "raw" materials to create our product )
-      + isos
-      + cots   (COTS downloads)
-      + custom_packages
-         + deb
-         + msi
-         + rpm
-         + tarballs
-      + repositories (this is a 1:1 mirror of the public repositories
-         |            so their actual structure will be distro-specific)
-         + centos
-         |     + yyyymmddhhmm (when the rsync completed)
-         |     + 201001270945
-         |     + latest -> 201001270945
-         + cygwin
-         |     + yyyymmddhhmm
-         |     + 201001270945
-         |     + latest -> 201001270945
-         + dag
-         |     + yyyymmddhhmm
-         |     + 201001270945
-         |     + latest -> 201001270945
-         + debian
-         |     + yyyymmddhhmm
-         |     + 201001270945
-         |     + latest -> 201001270945
-         + epel
-               + yyyymmddhhmm
-               + 201001270945
-               + latest -> 201001270945
-   + product ----------> (from where we actually deploy/patch)
-      + application
-         + ms_office
-      + centos
-         + 5.3
-            + yyyymmddhhmm (when the merge completed)
-            + 201001270945
-            + latest -> 201001270945
-         + 5.4
-            + 201001270945
-            + latest -> 201001270945
-         + cygwin
-         + debian
-            + lenny
-               + yyyymmddhhmm
-               + 201001270945
-               + latest -> 201001270945
-         + openfiler
-         + redhat
-         + ubuntu
-         + windows
-         + vmware
-         + windows
-            + winxp
-            + ws2k3
-            + vista
-            + ws2k8
-            + win_7
-   + working ( effectively scratch space to convert materials->product )
-      + src
-      + SRPMS
+# Purpose
+Version control your package repository
+
+# Author
+James S White
+
+# License 
+
+<pre>
+ WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+                    Version 2, December 2004
+
+ Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+
+ Everyone is permitted to copy and distribute verbatim or modified
+ copies of this license document, and changing it is allowed as long
+ as the name is changed.
+
+            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+  0. You just DO WHAT THE FUCK YOU WANT TO. 
+</pre>
