@@ -1,3 +1,8 @@
+################################################################################
+# This sets up the data_idx to be browsable, but to use the Rewrite_Idx2Cas.pl script
+# to rewrite the files to the contents in the Content-Addressable-Storage (CAS)
+################################################################################
+
 RewriteLock   /var/tmp/apache2-rewrite.lock
 <IfModule mod_ssl.c>
     <VirtualHost *:443>

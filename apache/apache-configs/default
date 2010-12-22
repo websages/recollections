@@ -1,3 +1,4 @@
+# this just forces ssl, so we can use eventually mod_auth_ldap and not spray passwords all over
 <VirtualHost *:80>
         ServerAdmin webmaster@localhost
         Redirect temporary / https://packages.lab.example.org/
