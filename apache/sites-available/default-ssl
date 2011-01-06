@@ -1,41 +1,6 @@
 RewriteLock   /var/tmp/apache2-rewrite.lock
 <IfModule mod_ssl.c>
     <VirtualHost *:443>
-        ########################################################################
-        #  Stock vhosts stuff
-        ########################################################################
-	ServerAdmin webmaster@localhost
-	ServerName  packages.lab.example.com
-	ServerAlias packages.lab.example.com
-	ErrorLog /var/log/apache2/error.log
-	CustomLog /var/log/apache2/ssl_access.log combined
-	LogLevel warn
-	DocumentRoot /var/www
-	<Directory />
-		Options FollowSymLinks
-		AllowOverride None
-	</Directory>
-	<Directory /var/www>
-		Options Indexes FollowSymLinks MultiViews
-		AllowOverride None
-		Order allow,deny
-		allow from all
-	</Directory>
-	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
-	<Directory "/usr/lib/cgi-bin">
-		AllowOverride None
-		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
-		Order allow,deny
-		Allow from all
-	</Directory>
-	Alias /doc/ "/usr/share/doc/"
-	<Directory "/usr/share/doc/">
-		Options Indexes MultiViews FollowSymLinks
-		AllowOverride None
-		Order deny,allow
-		Deny from all
-		Allow from 127.0.0.0/255.0.0.0 ::1/128
-	</Directory>
 	SSLEngine on
 	SSLCertificateFile    /etc/ssl/certs/localhost.crt
 	SSLCertificateKeyFile /etc/ssl/private/localhost.key
@@ -49,20 +14,12 @@ RewriteLock   /var/tmp/apache2-rewrite.lock
 		nokeepalive ssl-unclean-shutdown \
 		downgrade-1.0 force-response-1.0
 
-        ########################################################################
-        #  recollection stuff follows
-        ########################################################################
- 
         SSLProxyEngine On
         # SSLProxyCheckPeerCN off
         # SSLProxyCheckExpire off
-
-        RewriteEngine on
-        RewriteMap    recollections prg:/etc/apache2/ApachePerl/Rewrite_Idx2Cas.pl
-        RewriteRule   ^/recollections/(.*)$ ${recollections:$1} [P,L]
-
-        #ProxyRequests on
-        <Proxy https://packages.lab.example.com/>
+        Include sites-available/common
+        ProxyRequests on
+        <Proxy https://packages.lab.eftdomain.net/>
             <LimitExcept GET>
                 Order deny,allow
                 Deny from all
@@ -72,27 +29,5 @@ RewriteLock   /var/tmp/apache2-rewrite.lock
                   Allow from all
               </Limit>
         </Proxy>
-
-        # the index tree we rewrite
-        Alias /recollections/ "/software/data/factory/data_idx/"
-
-        # the index tree we don't
-        Alias /data_idx/ "/software/data/factory/data_idx/"
-
-        <Directory /software/data/factory/data_idx>
-                Options Indexes FollowSymLinks MultiViews
-                AllowOverride None
-                Order allow,deny
-                allow from all
-        </Directory>
-
-        Alias /data_cas "/software/data/factory/data_cas"
-        <Directory /software/data/factory/data_cas>
-                Options Indexes FollowSymLinks MultiViews
-                AllowOverride None
-                Order allow,deny
-                allow from all
-        </Directory>
-
     </VirtualHost>
 </IfModule>

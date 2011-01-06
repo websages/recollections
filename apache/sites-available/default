@@ -1,4 +1,15 @@
+RewriteLock   /var/tmp/apache2-rewrite.lock
 <VirtualHost *:80>
-        ServerAdmin webmaster@localhost
-        Redirect temporary / https://packages.lab.example.org/
+   Include sites-available/common
+    ProxyRequests on
+    <Proxy http://packages.lab.eftdomain.net/>
+        <LimitExcept GET>
+            Order deny,allow
+            Deny from all
+          </LimitExcept>
+          <Limit GET>
+              Order allow,deny
+              Allow from all
+          </Limit>
+    </Proxy>
 </VirtualHost>

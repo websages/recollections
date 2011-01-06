@@ -2,7 +2,7 @@
 $| = 1;
 $DEBUG=1;
 print STDERR "Starting rewrite engine\n" if $DEBUG;
-my $cfg = { 'basedir'=> "/software/data/factory" };
+my $cfg = { 'basedir'=> "/software/data/factory/product" };
 while (<>) {
     my $output="";
     chomp();
@@ -17,8 +17,8 @@ while (<>) {
         open(KEYFILE, "$cfg->{'basedir'}/data_idx/$_") || die "cannot open file for reading @!";
         my $line=<KEYFILE>;
         close(KEYFILE);
-        if($line=~m/^(([0-9a-f]{4,4})([0-9a-f]{4,4})([0-9a-f]{4,4})([0-9a-f]+))/){
-            $output = "data_cas/$2/$3/$4/$1\n";
+        if($line=~m/^(([0-9a-f]{2,2})([0-9a-f]{4,4})([0-9a-f]{4,4})([0-9a-f]+))/){
+            $output = "data_cas/$2/$1\n";
         }else{
             #s|^.*|mediacas/incoming/test/test2.jpg|;
             $output = "data_idx/$_\n";
