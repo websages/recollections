@@ -5,6 +5,7 @@ usage(){
     echo "Usage: reco commit <directory_under_working>"
     exit 1;
 }
+DATE=$(echo "obase=16; ibase=10;$(date +'%s')" | bc)
 
 case "$1" in
     commit)
@@ -23,10 +24,11 @@ case "$1" in
             then mkdir -p "${RECOLLECTIONS}/${REPO_BASENAME}"
         fi 
         rsync -qaP --link-dest=${FULL_PATH}/ ${FULL_PATH}/ ${RECOLLECTIONS}/${REPO_BASENAME}/${COMMIT_HASH}/
-        (cd ${RECOLLECTIONS}/${REPO_BASENAME}; if [ -h "HEAD" ]; then unlink "HEAD"; fi)
+        (cd ${RECOLLECTIONS}/${REPO_BASENAME}; if [ -h "HEAD" ]; then /bin/rm HEAD; fi)
         (cd ${RECOLLECTIONS}/${REPO_BASENAME}; ln -s ${COMMIT_HASH} HEAD)
+        (cd ${RECOLLECTIONS}/${REPO_BASENAME}; ln -s ${COMMIT_HASH} ${DATE})
         (cd ${RECOLLECTIONS}/${REPO_BASENAME}; chown -R www-data:www-data ${COMMIT_HASH} HEAD)
-        echo "HEAD -> ${COMMIT_HASH}"
+        deduplicate "${COMMIT_DIR}/${COMMIT_HASH}" > /dev/null 
         exit 0;
     ;;
     *)
