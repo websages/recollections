@@ -1,4 +1,15 @@
 #!/bin/bash
+################################################################################
+# here is the script I use to rsync the upstream mirrors to a read-only and 
+# timestamped. It clones the previous copy of the mirror, then --link-dests
+# to the last as to not use more disk space than necessary.
+# 
+# Usage: collect_upstream [debian|dag|rpmforge|cygwin|centos|epel|fedora]
+# 
+# It uses some debian specific methods for debian, and will exclude some of the 
+# parts of the tree I don't want to mirror. So you'll have to tweak it if you
+# want to use it (probably)
+################################################################################
 export PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 UPSTREAM=/software/data/factory/upstream
 DATA_CAS=/software/data/factory/data_cas

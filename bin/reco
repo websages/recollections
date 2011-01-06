@@ -1,4 +1,16 @@
 #!/bin/bash
+################################################################################
+# This script will "recollect" a repository, this is very CentOS specific
+# the Debian apt-ftparchive stuff has not been added to it yet
+# it will mirror a directory under your working area and hash the contents 
+# and the file names so that it cannot be modified without invalidating the 
+# hash. After these are hashed, they should be deduplicated, and then made 
+# read-only if you need to make changes, add the changes to /working, then 
+# "reco commit <dir>" again and create a new hash. Everything in the recollection
+# is a hard-link somewhere else, so the only additional space a recollection
+# takes up is the index files created by createrepo
+################################################################################
+
 export WORKING="/software/data/factory/working"
 export RECOLLECTIONS="/software/data/factory/recollections"
 usage(){
