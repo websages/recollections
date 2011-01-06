@@ -3,45 +3,44 @@
 # probably converted to a dynamic language and not to suck in general.
 #
 # This all must be one filesystem (or a CAS-backed apache tree), as we use hard links to de-duplicate
-${opt}
-  + pkg
-     + control         <- [ control builds and maintains the repositories ]
-     |  + apache
-     |  + bin          <- binaries for processing (ingredients -> preparation -> product) 
-     |  + etc
-     |  + hooks
-     |  - README
-     |
-     + ingredients      <- [ ingredients are un-altered upstream sources ]
-     |   + cpan         <- unpackaged perl modules
-     |   + cvs          <- cvs checkouts from external sources
-     |   + git          <- cloned git sources
-     |   + svn          <- svn checkouts from external sources
-     |   + isos         <- iso files not on mirrors
-     |   + mirrors      <- timestamped mirrors of external package sources
-     |   |  + centos
-     |   |     + 4B903324
-     |   |     + 4BCC8AC2
-     |   |     + ...
-     |   |     + 4CFD0510
-     |   |     + latest -> 4CFD0510
-     |   |  + cygwin
-     |   |  + dag-rpmforge
-     |   |  + debian
-     |   |  + debian-multimedia
-     |   |  + epel
-     |   |  + fedora
-     |   |  + debian
-     |   |  + unattended
-     |   + misc         <- items not from source control, tarballs, cpan
-     |   + source       <- source (tar.gz) not packaged
-     |   + srpms        <- source rpms not from mirrors
-     |
-     + preparation      <- [ preparation is where we turn our sources into repositories ]
-     |  +  build        <- space to create packages from ingredients
-     |  +  recollection <- snapshots of working that have been repo closed and hashed 
-     |  +  working      <- cloned from ingredients/mirrors, users can http PUT new content
-     |
-     + product          <- [ product is where we store the "frozen" repositories
-        + data_cas      <- recollection data permanently stored
-        + data_idx      <- recollection indexes permanently stored
+${somewhere}
+  + control         <- [ control builds and maintains the repositories ]
+  |  + apache
+  |  + bin          <- binaries for processing (ingredients -> preparation -> product) 
+  |  + etc
+  |  + hooks
+  |  - README
+  |
+  + ingredients      <- [ ingredients are un-altered upstream sources ]
+  |   + cpan         <- unpackaged perl modules
+  |   + cvs          <- cvs checkouts from external sources
+  |   + git          <- cloned git sources
+  |   + svn          <- svn checkouts from external sources
+  |   + isos         <- iso files not on mirrors
+  |   + mirrors      <- timestamped mirrors of external package sources
+  |   |  + centos
+  |   |     + 4B903324
+  |   |     + 4BCC8AC2
+  |   |     + ...
+  |   |     + 4CFD0510
+  |   |     + latest -> 4CFD0510
+  |   |  + cygwin
+  |   |  + dag-rpmforge
+  |   |  + debian
+  |   |  + debian-multimedia
+  |   |  + epel
+  |   |  + fedora
+  |   |  + debian
+  |   |  + unattended
+  |   + misc         <- items not from source control, tarballs, cpan
+  |   + source       <- source (tar.gz) not packaged
+  |   + srpms        <- source rpms not from mirrors
+  |
+  + preparation      <- [ preparation is where we turn our sources into repositories ]
+  |  +  build        <- space to create packages from ingredients
+  |  +  recollection <- snapshots of working that have been repo closed and hashed 
+  |  +  working      <- cloned from ingredients/mirrors, users can http PUT new content
+  |
+  + product          <- [ product is where we store the "frozen" repositories
+     + data_cas      <- recollection data permanently stored
+     + data_idx      <- recollection indexes permanently stored
