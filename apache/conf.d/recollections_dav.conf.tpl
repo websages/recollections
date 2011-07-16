@@ -4,7 +4,7 @@
 # who can add to a repository, but it works...
 ################################################################################
 Alias /working/ "[% RECOLLECTIONS_ROOT %]/working/"
-<Directory "/[% RECOLLECTIONS_ROOT %]/working/">
+<Directory "[% RECOLLECTIONS_ROOT %]/working/">
     DAV On
     PerlFixupHandler +ApachePerl::AutoMKCOL
     PerlCleanupHandler +ApachePerl::AutoDeleteEmpty
