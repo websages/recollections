@@ -32,7 +32,7 @@ sub handler {
     }
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
           $b->read(my $data);
-          warn("data: $data\n");
+          #warn("data: $data\n");
           $ctx->{'sha1'}->add($data) if $data;
     }
     # prin to stderr for now, but we need to save this in the request
