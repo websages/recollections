@@ -18,7 +18,7 @@ use Apache2::Connection ( );
 use APR::Brigade ( );
 use APR::Bucket ( );
 
-sub handler : FilterRequestHandler {
+sub handler {
     my($filter, $bb, $mode, $block, $readbytes) = @_;
 
     my $c = $filter->c;
