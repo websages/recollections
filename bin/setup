@@ -39,7 +39,8 @@ for d in data/idx data/cas working; do
   fi
 done
 
-sed -e "s/[% RECOLLECTIONS_ROOT %]/${RECOLLECTIONS_ROOT}/g"\
+SED_RR=$(echo ${RECOLLECTIONS_ROOT}|sed -e 's/\//\\\//g')
+sed -e "s/[% RECOLLECTIONS_ROOT %]/${SED_RR}/g"\
      apache/conf.d/recollections_dav.conf.tpl > ${APACHE_CONF}/recollections_dav.conf
 
 
