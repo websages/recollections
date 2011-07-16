@@ -26,7 +26,7 @@ sub handler {
     return Apache2::Const::DECLINED unless ($r->method() eq "PUT");
 
     my $ctx = $f->ctx || {}; # set up our context to save our hasher
-    $ctx->{'sha1'} = Digest::SHA->new('sha1sum') unless($ctx->{'sha1');
+    $ctx->{'sha1'} = Digest::SHA->new('sha1sum') unless($ctx->{'sha1'});
 
     my $rv = $f->next->get_brigade($bb, $mode, $block, $readbytes);
     unless($rv == APR::Const::SUCCESS){
@@ -37,7 +37,9 @@ sub handler {
           $b->read(my $data);
           $ctx->{'sha1'}->add($data) if $data;
     }
-    print STDERR "digest: ".$ctx->{'sha1'}->hexdigest;
+    if ($f->seen_eos) {
+        print STDERR "digest: ".$ctx->{'sha1'}->hexdigest;
+    }
     $f->ctx($ctx);
     return Apache2::Const::OK;
 }
