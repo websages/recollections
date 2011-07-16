@@ -1,0 +1,38 @@
+#!/bin/bash
+RECOLLECTIONS_ROOT="/opt/local/recollections"
+
+################################################################################
+if [ -f /etc/debian_version ];then
+  NEED=""
+  for pkg in libapache2-mod-perl2; do
+    dpkg -l | grep -q "ii ${pkg} " || NEED="$NEED ${pkg}"
+  done
+  if [ ! -z ${NEED} ]; then
+    apt-get install -y${NEED} 
+  fi
+  APACHE="/etc/apache2"
+   APACHE_USER="www-data"
+   APACHE_group="www-data"
+fi
+################################################################################
+if [ -f /etc/redhat_release ];then
+   echo "Add RedHat/yum support plz"
+   exit 1;
+   APACHE="/etc/httpd"
+   APACHE_USER="apache"
+   APACHE_group="apache"
+fi
+
+################################################################################
+if [ ! -d "${RECOLLECTIONS_ROOT}" ];then 
+  mkdir -p "${RECOLLECTIONS_ROOT}"
+  chown ${APACHE_USER}:${APACHE_GROUP} "${RECOLLECTIONS_ROOT}"
+  chmod 0755 "${RECOLLECTIONS_ROOT}"
+fi
+for d in data/idx data/cas; do 
+  if [ ! -d "${RECOLLECTIONS_ROOT}/${d}" ];then 
+    mkdir -p "${RECOLLECTIONS_ROOT}/${d}"
+    chown -R ${APACHE_USER}:${APACHE_GROUP} "${RECOLLECTIONS_ROOT}/${d}"
+    chmod 0755  "${RECOLLECTIONS_ROOT}/${d}"
+  fi
+done
