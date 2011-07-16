@@ -24,6 +24,11 @@ sub handler {
 
     my $ctx = $f->ctx || {}; # set up our context to save our hasher
     $ctx->{'sha1'} = Digest::SHA->new('sha1sum') unless($ctx->{'sha1'});
+    if($ctx->{'chunk'}){
+        $ctx->{'chunk'}++;
+    }else{
+        $ctx->{'chunk'}=1;
+    }
 
     my $rv = $f->next->get_brigade($bb, $mode, $block, $readbytes);
     unless($rv == APR::Const::SUCCESS){
@@ -40,6 +45,7 @@ sub handler {
     }
     # prin to stderr for now, but we need to save this in the request
     $f->ctx($ctx);
+    print STDERR "chunk $ctx->{'chunk'}\n";
     return Apache2::Const::OK;
 }
 1;
