@@ -39,7 +39,7 @@ sub handler {
         $b->read(my $data);
         if($ctx->{'bytes'}){ $ctx->{'bytes'}+=length($data); }else{ $ctx->{'bytes'}=length($data); }
         if($data){
-            warn("data: [$data]\n");
+            #warn("data: [$data]\n");
             $ctx->{'sha1'}->add($data);
             print STDERR "seen_eos: ". $f->seen_eos ."\n" if($f->seen_eos);
             my $clone = $ctx->{'sha1'}->clone();

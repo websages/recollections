@@ -13,6 +13,7 @@ use warnings;
 use Apache2::RequestRec ();
 use Apache2::ServerRec ();
 use Apache2::Log ();
+use APR::Table ( );
 
 use File::Path;
 use File::Basename;
@@ -47,6 +48,13 @@ sub handler {
                         return Apache2::Const::DECLINED;
                     }
                 }
+        }
+        if ($r->method() eq "DELETE")
+        {
+             my $notes = $r->notes();
+             print STDERR "[".$notes->get("sha1sum")."]\n";
+
+ 
         }
         # Allow next handler to run
         return Apache2::Const::DECLINED;
