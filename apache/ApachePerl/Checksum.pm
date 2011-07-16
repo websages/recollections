@@ -34,7 +34,7 @@ sub handler {
         $b->read(my $data);
         if($ctx->{'bytes'}){ $ctx->{'bytes'}+=length($data); }else{ $ctx->{'bytes'}=length($data); }
         warn("data: $data\n");
-        $ctx->{'sha1'}->add_bits(pack("a*",$data,length($data)*8)) if $data;
+        $ctx->{'sha1'}->add_bits(pack("A*",$data,length($data)*8)) if $data;
         print STDERR "seen_eos: ".$f->seen_eos."\n";
         print STDERR "digest: ".$ctx->{'sha1'}->hexdigest."\n";
     }
