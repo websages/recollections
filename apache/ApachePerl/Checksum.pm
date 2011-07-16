@@ -20,8 +20,9 @@ use APR::Bucket ( );
 sub handler {
     my($filter, $bb, $mode, $block, $readbytes) = @_;
 
-    #my $c = $filter->c;
-    #my $bb_ctx = APR::Brigade->new($c->pool, $c->bucket_alloc);
+    my $c = $filter->c;
+    my $r = $filter->r;
+    my $bb_ctx = APR::Brigade->new($r->pool, $c->bucket_alloc);
     my $rv = $filter->next->get_brigade($bb, $mode, $block, $readbytes);
     return $rv unless $rv == APR::Const::SUCCESS;
 
