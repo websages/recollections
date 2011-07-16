@@ -53,5 +53,5 @@ if [ ! -d "${APACHE_CONF}/ApachePerl" ];then
 fi
 for perlmod in AutoDeleteEmpty.pm AutoMKCOL.pm Rewrite_Idx2Cas.pl; do
     install -m 0755 -o ${APACHE_USER} -g ${APACHE_GROUP} \
-        ${GIT_ROOT}/ApachePerl/${perlmod} ${APACHE_CONF}/ApachePerl/${perlmod}
+        ${GIT_ROOT}/apache/ApachePerl/${perlmod} ${APACHE_CONF}/ApachePerl/${perlmod}
 done
