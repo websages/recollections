@@ -10,6 +10,7 @@ if [ -f /etc/debian_version ];then
   for pkg in libapache2-mod-perl2; do
     dpkg -l | grep -q "ii ${pkg} " || NEED="$NEED ${pkg}"
   done
+  echo "I need [$NEED ]"
   if [ ! -z ${NEED} ]; then
     apt-get install -y${NEED} 
   fi
