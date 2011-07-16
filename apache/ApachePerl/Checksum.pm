@@ -30,7 +30,7 @@ sub handler {
           $b->read(my $data);
           warn("data: $data\n");
   
-          if ($data and $data =~ s|FUCK|SHIT|) {
+          if ($data and $data =~ s|FUCK|SHIT|g) {
               my $nb = APR::Bucket->new($bb->bucket_alloc, $data);
               $b->insert_after($nb);
               $b->remove; # no longer needed
