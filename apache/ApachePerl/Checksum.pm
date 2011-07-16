@@ -32,9 +32,9 @@ sub handler {
 
     my $rv = $f->next->get_brigade($bb, $mode, $block, $readbytes);
     if($ctx->{'bytes'}){
-        $ctx->{'bytes'}+=$readbytes;
+        $ctx->{'bytes'}+=length($data);
     }else{
-        $ctx->{'bytes'}=$readbytes;
+        $ctx->{'bytes'}=length($data);
     }
     unless($rv == APR::Const::SUCCESS){
         $f->ctx($ctx);
