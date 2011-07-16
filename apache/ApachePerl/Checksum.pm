@@ -24,6 +24,7 @@ sub handler {
 
     my $c = $f->c;
     my $r = $f->r;
+    print STDERR __PACKAGE__ ." \$r=". ref($r)."\n";
 
     my $rv = $f->next->get_brigade($bb, $mode, $block, $readbytes);
     return $rv unless $rv == APR::Const::SUCCESS;
