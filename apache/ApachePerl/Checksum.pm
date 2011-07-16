@@ -24,7 +24,7 @@ sub handler : FilterRequestHandler {
     my $c = $filter->c;
     my $bb_ctx = APR::Brigade->new($c->pool, $c->bucket_alloc);
     my $rv = $filter->next->get_brigade($bb_ctx, $mode, $block, $readbytes);
-    return $rv unless $rv =  = APR::SUCCESS;
+    return $rv unless $rv == APR::SUCCESS;
 
     while (!$bb_ctx->empty) {
         my $b = $bb_ctx->first;
