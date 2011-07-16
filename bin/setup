@@ -43,7 +43,8 @@ done
 
 SED_RR=$(echo ${RECOLLECTIONS_ROOT}|sed -e 's/\//\\\//g')
 sed -e "s/\[% RECOLLECTIONS_ROOT %\]/${SED_RR}/g"\
-     ${GIT_ROOT}/apache/conf.d/recollections_dav.conf.tpl > ${APACHE_CONF}/recollections_dav.conf
+     ${GIT_ROOT}/apache/conf.d/recollections_dav.conf.tpl \
+       > ${APACHE_CONF}/conf.d/recollections_dav.conf
 
 if [ ! -d "${APACHE_CONF}/ApachePerl" ];then 
   mkdir -p "${APACHE_CONF}/ApachePerl" 
