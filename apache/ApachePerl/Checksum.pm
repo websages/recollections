@@ -20,10 +20,10 @@ use APR::Bucket ( );
 sub handler : FilterConnectionHandler {
     my($f, $bb, $mode, $block, $readbytes) = @_;
 
-    my $c = $filter->c;
-    my $r = $filter->r;
+    my $c = $f->c;
+    my $r = $f->r;
 
-    my $rv = $filter->next->get_brigade($bb, $mode, $block, $readbytes);
+    my $rv = $f->next->get_brigade($bb, $mode, $block, $readbytes);
     return $rv unless $rv == APR::Const::SUCCESS;
 
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
