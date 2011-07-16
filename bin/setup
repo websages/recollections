@@ -30,6 +30,7 @@ if [ ! -d "${RECOLLECTIONS_ROOT}" ];then
   chown ${APACHE_USER}:${APACHE_GROUP} "${RECOLLECTIONS_ROOT}"
   chmod 0755 "${RECOLLECTIONS_ROOT}"
 fi
+
 for d in data/idx data/cas working; do 
   if [ ! -d "${RECOLLECTIONS_ROOT}/${d}" ];then 
     mkdir -p "${RECOLLECTIONS_ROOT}/${d}"
@@ -41,6 +42,12 @@ done
 sed -e "s/[% RECOLLECTIONS_ROOT %]/${RECOLLECTIONS_ROOT}/g"\
      apache/conf.d/recollections_dav.conf.tpl > ${APACHE_CONF}/recollections_dav.conf
 
+
+if [ ! -d "${APACHE_CONF}/ApachePerl" ];then 
+  mkdir -p "${APACHE_CONF}/ApachePerl" 
+  chown -R ${APACHE_USER}:${APACHE_GROUP} "${APACHE_CONF}/ApachePerl"
+  chmod 0755 "${APACHE_CONF}/ApachePerl"
+fi
 for perlmod in AutoDeleteEmpty.pm AutoMKCOL.pm Rewrite_Idx2Cas.pl; do
     install -m 0755 -o ${APACHE_USER} -g ${APACHE_GROUP} \
         ApachePerl/${perlmod} ${APACHE_CONF}/ApachePerl/${perlmod}
