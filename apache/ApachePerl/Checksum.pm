@@ -33,10 +33,13 @@ sub handler {
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
         $b->read(my $data);
         if($ctx->{'bytes'}){ $ctx->{'bytes'}+=length($data); }else{ $ctx->{'bytes'}=length($data); }
-        warn("data: [$data]\n");
-        $ctx->{'sha1'}->add($data);
-        print STDERR "seen_eos: ".$f->seen_eos."\n";
-        print STDERR "digest: ".$ctx->{'sha1'}->hexdigest."\n";
+        if($data){
+            warn("data: [$data]\n");
+            $ctx->{'sha1'}->add($data);
+            print STDERR "seen_eos: ".$f->seen_eos."\n";
+            my $clone = $ctx->{'sha1'}->clone();
+            print STDERR "digest: ".$clone->hexdigest."\n";
+        }
     }
     $f->ctx($ctx);
     print STDERR "chunk $ctx->{'chunk'}: bytes $ctx->{'bytes'} / $readbytes\n";
