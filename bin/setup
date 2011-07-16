@@ -40,7 +40,7 @@ for d in data/idx data/cas working; do
     chmod 0755  "${RECOLLECTIONS_ROOT}/${d}"
   fi
 done
-touch "${RECOLLECTIONS_ROOT}/working/.anchor"
+echo "Removing this file will make ApachePerl::AutoDeleteEmpty remove the working directory."> "${RECOLLECTIONS_ROOT}/working/.anchor"
 
 SED_RR=$(echo ${RECOLLECTIONS_ROOT}|sed -e 's/\//\\\//g')
 sed -e "s/\[% RECOLLECTIONS_ROOT %\]/${SED_RR}/g"\
@@ -58,8 +58,12 @@ for perlmod in AutoDeleteEmpty.pm AutoMKCOL.pm Rewrite_Idx2Cas.pl; do
 done
 
 for mod in ssl.conf ssl.load dav_fs.conf  dav_fs.load  dav.load  dav_lock.load; do
-    (cd /etc/apache2/mods-enabled; ln -s ../mods-available/${mod})
+    (cd /etc/apache2/mods-enabled; [ ! -h ${mod} ] && ln -s ../mods-available/${mod})
 done
 
 /usr/sbin/apachectl configtest && /etc/init.d/apache2 restart
+################################################################################
+# Now http GET|PUT|DELETE work for regular dav_fs
+################################################################################
+
 
