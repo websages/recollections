@@ -38,7 +38,7 @@ sub handler : FilterRequestHandler {
 
         my $data;
         my $status = $b->read($data);
-        return $status unless $status =  = APR::SUCCESS;
+        return $status unless $status == APR::SUCCESS;
 
         $b = APR::Bucket->new(lc $data) if $data;
 
