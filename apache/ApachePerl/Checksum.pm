@@ -35,9 +35,9 @@ sub handler {
           $ctx->{'sha1'}->add($data) if $data;
     }
     # prin to stderr for now, but we need to save this in the request
-    if ($f->seen_eos) {
+    #if ($f->seen_eos) {
         print STDERR "digest: ".$ctx->{'sha1'}->hexdigest;
-    }
+    #}
     $f->ctx($ctx);
     return Apache2::Const::OK;
 }
