@@ -12,7 +12,7 @@ use File::Basename;
 
 # Compile constants
 use Apache2::Filter ( );
-use APR::Const     -compile => ':common SUCCESS';
+use APR::Const     -compile => ':common';
 use Apache2::Const -compile => qw(OK DECLINED);
 use APR::Brigade ( );
 use APR::Bucket ( );
