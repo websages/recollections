@@ -19,20 +19,16 @@ use APR::Bucket ( );
 
 sub handler {
     my($f, $bb, $mode, $block, $readbytes) = @_;
-    print STDERR __PACKAGE__ ." \$f=". ref($f)."\n";
-
-
     my $c = $f->c;
     my $r = $f->r;
-    print STDERR __PACKAGE__ ." \$r=". ref($r)."\n";
+    return Apache2::Const::DECLINED unless ($r->method() eq "PUT");
+
 
     my $rv = $f->next->get_brigade($bb, $mode, $block, $readbytes);
     return $rv unless $rv == APR::Const::SUCCESS;
 
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
           $b->read(my $data);
-          warn("data: $data\n");
-  
           if ($data and $data =~ s|FUCK|SHIT|g) {
               my $nb = APR::Bucket->new($bb->bucket_alloc, $data);
               $b->insert_after($nb);
