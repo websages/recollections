@@ -42,7 +42,7 @@ sub handler {
     }
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
         $b->read(my $data);
-        #warn("data: $data\n");
+        warn("data: $data\n");
         $ctx->{'sha1'}->add($data) if $data;
         if ($f->seen_eos) {
             print STDERR "digest: ".$ctx->{'sha1'}->hexdigest."\n";
