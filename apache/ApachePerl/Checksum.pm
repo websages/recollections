@@ -6,6 +6,7 @@ use warnings;
 use Apache2::RequestRec ();
 use Apache2::ServerRec ();
 use Apache2::Log ();
+use Attribute::Handlers;
 
 use File::Path;
 use File::Basename;
