@@ -24,7 +24,7 @@ sub handler {
     my $r = $filter->r;
 print STDERR "-=[ ". ref($c) .",". ref($r) ."]=-\n";
 #    my $bb_ctx = APR::Brigade->new($r->pool, $c->bucket_alloc);
-#    my $rv = $filter->next->get_brigade($bb, $mode, $block, $readbytes);
+    my $rv = $filter->next->get_brigade($bb, $mode, $block, $readbytes);
     return $rv unless $rv == APR::Const::SUCCESS;
 
 #    while (!$bb_ctx->empty) {
