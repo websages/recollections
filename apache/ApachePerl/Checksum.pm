@@ -24,12 +24,7 @@ sub handler {
 
     my $ctx = $f->ctx || {}; # set up our context to save our hasher
     $ctx->{'sha1'} = Digest::SHA->new('sha1sum') unless($ctx->{'sha1'});
-    if($ctx->{'chunk'}){
-        $ctx->{'chunk'}++;
-    }else{
-        $ctx->{'chunk'}=1;
-    }
-
+    if($ctx->{'chunk'}){ $ctx->{'chunk'}++; }else{ $ctx->{'chunk'}=1; }
     my $rv = $f->next->get_brigade($bb, $mode, $block, $readbytes);
     unless($rv == APR::Const::SUCCESS){
         $f->ctx($ctx);
@@ -37,18 +32,13 @@ sub handler {
     }
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
         $b->read(my $data);
-    if($ctx->{'bytes'}){
-        $ctx->{'bytes'}+=length($data);
-    }else{
-        $ctx->{'bytes'}=length($data);
-    }
+        if($ctx->{'bytes'}){ $ctx->{'bytes'}+=length($data); }else{ $ctx->{'bytes'}=length($data); }
         warn("data: $data\n");
         $ctx->{'sha1'}->add($data) if $data;
-        if ($f->seen_eos) {
+        #if ($f->seen_eos) {
             print STDERR "digest: ".$ctx->{'sha1'}->hexdigest."\n";
-        }
+        #}
     }
-    # prin to stderr for now, but we need to save this in the request
     $f->ctx($ctx);
     print STDERR "chunk $ctx->{'chunk'}: bytes $ctx->{'bytes'} / $readbytes\n";
     return Apache2::Const::OK;
