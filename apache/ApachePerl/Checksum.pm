@@ -37,7 +37,7 @@ sub handler {
         return $status unless $status == APR::Const::SUCCESS;
 
         if ($data and $data =~ s|^FUCK|SHIT|) {
-            $bn = APR::Bucket->new($data);
+            my $bn = APR::Bucket->new($data);
             $b->insert_after($bn);
             $b->remove; # no longer needed
             last;
