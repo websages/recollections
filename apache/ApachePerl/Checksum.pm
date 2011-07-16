@@ -12,7 +12,7 @@ use File::Basename;
 
 # Compile constants
 use Apache2::Filter ( );
-use APR::Const     -compile => ':common';
+use APR::Const     -compile => ':common'; # SUCCESS
 use Apache2::Const -compile => qw(OK DECLINED);
 use APR::Brigade ( );
 use APR::Bucket ( );
@@ -22,7 +22,7 @@ sub handler {
 
 #    my $c = $filter->c;
 #    my $bb_ctx = APR::Brigade->new($c->pool, $c->bucket_alloc);
-    my $rv = $filter->next->get_brigade($bb_ctx, $mode, $block, $readbytes);
+    my $rv = $filter->next->get_brigade($bb, $mode, $block, $readbytes);
     return $rv unless $rv == APR::Const::SUCCESS;
 
 #    while (!$bb_ctx->empty) {
