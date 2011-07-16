@@ -11,6 +11,7 @@ use APR::Const     -compile => ':common'; # SUCCESS
 use Apache2::Const -compile => qw(OK DECLINED);
 use APR::Brigade ( );
 use APR::Bucket ( );
+use APR::Table ( );
 
 use Digest::SHA;
 
