@@ -24,6 +24,7 @@ use Apache2::Const -compile => qw(DECLINED);
 
 sub handler {
         my $r = shift;
+        print STDERR __PACKAGE__ ." \$r=". ref($r)."\n";
 
         # Create directories if processing a put request.
         if ($r->method() eq "PUT")

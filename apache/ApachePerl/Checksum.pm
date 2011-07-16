@@ -19,6 +19,8 @@ use APR::Bucket ( );
 
 sub handler {
     my($f, $bb, $mode, $block, $readbytes) = @_;
+    print STDERR __PACKAGE__ ." \$f=". ref($f)."\n";
+
 
     my $c = $f->c;
     my $r = $f->r;
