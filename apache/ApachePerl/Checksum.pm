@@ -35,9 +35,8 @@ sub handler {
         if($ctx->{'bytes'}){ $ctx->{'bytes'}+=length($data); }else{ $ctx->{'bytes'}=length($data); }
         warn("data: $data\n");
         $ctx->{'sha1'}->add($data) if $data;
-        #if ($f->seen_eos) {
-            print STDERR "digest: ".$ctx->{'sha1'}->hexdigest."\n";
-        #}
+        print STDERR "seen_eos: ".$f->seen_eos."\n";
+        print STDERR "digest: ".$ctx->{'sha1'}->hexdigest."\n";
     }
     $f->ctx($ctx);
     print STDERR "chunk $ctx->{'chunk'}: bytes $ctx->{'bytes'} / $readbytes\n";
