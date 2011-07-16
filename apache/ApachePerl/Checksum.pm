@@ -21,23 +21,24 @@ sub handler {
     my($f, $bb, $mode, $block, $readbytes) = @_;
     my $c = $f->c;
     my $r = $f->r;
+
+    # only process PUTs
     return Apache2::Const::DECLINED unless ($r->method() eq "PUT");
 
+    my $ctx = $f->ctx || {}; # set up our context to save our hasher
+    $ctx->{'sha1'} = Digest::SHA->new('sha1sum') unless($ctx->{'sha1');
 
     my $rv = $f->next->get_brigade($bb, $mode, $block, $readbytes);
-    return $rv unless $rv == APR::Const::SUCCESS;
-
+    unless($rv == APR::Const::SUCCESS){
+        $f->ctx($ctx);
+        return $rv;
+    }
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
           $b->read(my $data);
-          if ($data and $data =~ s|FUCK|SHIT|g) {
-              my $nb = APR::Bucket->new($bb->bucket_alloc, $data);
-              $b->insert_after($nb);
-              $b->remove; # no longer needed
-              #$f->ctx(1); # flag that that we have done the job
-              last;
-          }
-      }
-
+          $ctx->{'sha1'}->add($data) if $data;
+    }
+    print STDERR "digest: ".$ctx->{'sha1'}->hexdigest;
+    $f->ctx($ctx);
     return Apache2::Const::OK;
 }
 1;
