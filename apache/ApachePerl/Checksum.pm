@@ -31,17 +31,17 @@ sub handler {
     }
 
     my $rv = $f->next->get_brigade($bb, $mode, $block, $readbytes);
-    if($ctx->{'bytes'}){
-        $ctx->{'bytes'}+=length($data);
-    }else{
-        $ctx->{'bytes'}=length($data);
-    }
     unless($rv == APR::Const::SUCCESS){
         $f->ctx($ctx);
         return $rv;
     }
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
         $b->read(my $data);
+    if($ctx->{'bytes'}){
+        $ctx->{'bytes'}+=length($data);
+    }else{
+        $ctx->{'bytes'}=length($data);
+    }
         warn("data: $data\n");
         $ctx->{'sha1'}->add($data) if $data;
         if ($f->seen_eos) {
