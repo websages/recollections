@@ -42,6 +42,6 @@ sed -e "s/[% RECOLLECTIONS_ROOT %]/${RECOLLECTIONS_ROOT}/g"\
      apache/conf.d/recollections_dav.conf.tpl > ${APACHE_CONF}/recollections_dav.conf
 
 for perlmod in AutoDeleteEmpty.pm AutoMKCOL.pm Rewrite_Idx2Cas.pl; do
-    install -m 0755 -u ${APACHE_USER} -g ${APACHE_GROUP} \
+    install -m 0755 -o ${APACHE_USER} -g ${APACHE_GROUP} \
         ApachePerl/${perlmod} ${APACHE_CONF}/ApachePerl/${perlmod}
 done
