@@ -6,16 +6,13 @@ use warnings;
 use Apache2::RequestRec ();
 use Apache2::ServerRec ();
 use Apache2::Log ();
-
-use File::Path;
-use File::Basename;
-
-# Compile constants
 use Apache2::Filter ( );
 use APR::Const     -compile => ':common'; # SUCCESS
 use Apache2::Const -compile => qw(OK DECLINED);
 use APR::Brigade ( );
 use APR::Bucket ( );
+
+use Digest::SHA;
 
 sub handler {
     my($f, $bb, $mode, $block, $readbytes) = @_;
@@ -37,6 +34,7 @@ sub handler {
           $b->read(my $data);
           $ctx->{'sha1'}->add($data) if $data;
     }
+    # prin to stderr for now, but we need to save this in the request
     if ($f->seen_eos) {
         print STDERR "digest: ".$ctx->{'sha1'}->hexdigest;
     }
