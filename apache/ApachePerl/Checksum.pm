@@ -6,7 +6,6 @@ use warnings;
 use Apache2::RequestRec ();
 use Apache2::ServerRec ();
 use Apache2::Log ();
-use Attribute::Handlers;
 
 use File::Path;
 use File::Basename;
@@ -18,7 +17,7 @@ use Apache2::Const -compile => qw(OK DECLINED);
 use APR::Brigade ( );
 use APR::Bucket ( );
 
-sub handler : FilterConnectionHandler {
+sub handler {
     my($f, $bb, $mode, $block, $readbytes) = @_;
 
     my $c = $f->c;
