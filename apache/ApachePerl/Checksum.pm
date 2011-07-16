@@ -18,12 +18,16 @@ sub handler {
     my($f, $bb, $mode, $block, $readbytes) = @_;
     my $c = $f->c;
     my $r = $f->r;
+    my $notes = $r->notes();
 
     # only process PUTs
     return Apache2::Const::DECLINED unless ($r->method() eq "PUT");
 
     my $ctx = $f->ctx || {}; # set up our context to save our hasher
-    $ctx->{'sha1'} = Digest::SHA->new('sha1sum') unless($ctx->{'sha1'});
+    unless($ctx->{'sha1'}){
+        $ctx->{'sha1'} = Digest::SHA->new('sha1sum');
+        $notes->add("sha1sum", '');
+    }
     if($ctx->{'chunk'}){ $ctx->{'chunk'}++; }else{ $ctx->{'chunk'}=1; }
     my $rv = $f->next->get_brigade($bb, $mode, $block, $readbytes);
     unless($rv == APR::Const::SUCCESS){
@@ -34,11 +38,11 @@ sub handler {
         $b->read(my $data);
         if($ctx->{'bytes'}){ $ctx->{'bytes'}+=length($data); }else{ $ctx->{'bytes'}=length($data); }
         if($data){
-            #warn("data: [$data]\n");
+            warn("data: [$data]\n");
             $ctx->{'sha1'}->add($data);
-            print STDERR "seen_eos: ".$f->seen_eos."\n" if($f->seen_eos);
+            print STDERR "seen_eos: ". $f->seen_eos ."\n" if($f->seen_eos);
             my $clone = $ctx->{'sha1'}->clone();
-            $r->notes("sha1sum" => $clone->hexdigest);
+            $notes->set("sha1sum", $clone->hexdigest); # update the APR::Table
         }
     }
     $f->ctx($ctx);
