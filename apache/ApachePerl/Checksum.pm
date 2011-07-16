@@ -50,7 +50,7 @@ sub handler {
     }
     # prin to stderr for now, but we need to save this in the request
     $f->ctx($ctx);
-    print STDERR "chunk $ctx->{'chunk'}: bytes $ctx->{'bytes'}\n";
+    print STDERR "chunk $ctx->{'chunk'}: bytes $ctx->{'bytes'} / $readbytes\n";
     return Apache2::Const::OK;
 }
 1;
