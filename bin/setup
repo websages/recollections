@@ -1,6 +1,8 @@
 #!/bin/bash
 RECOLLECTIONS_ROOT="/opt/local/recollections"
 MODPERL_DIR="/opt/local/recollections"
+THIS_DIR=$(cd $(dirname $0); pwd)
+GIT_ROOT=$(cd $(dirname $0); cd ..; pwd)
 
 ################################################################################
 if [ -f /etc/debian_version ];then
@@ -41,7 +43,7 @@ done
 
 SED_RR=$(echo ${RECOLLECTIONS_ROOT}|sed -e 's/\//\\\//g')
 sed -e "s/[% RECOLLECTIONS_ROOT %]/${SED_RR}/g"\
-     apache/conf.d/recollections_dav.conf.tpl > ${APACHE_CONF}/recollections_dav.conf
+     ${GIT_ROOT}/apache/conf.d/recollections_dav.conf.tpl > ${APACHE_CONF}/recollections_dav.conf
 
 
 if [ ! -d "${APACHE_CONF}/ApachePerl" ];then 
@@ -51,5 +53,5 @@ if [ ! -d "${APACHE_CONF}/ApachePerl" ];then
 fi
 for perlmod in AutoDeleteEmpty.pm AutoMKCOL.pm Rewrite_Idx2Cas.pl; do
     install -m 0755 -o ${APACHE_USER} -g ${APACHE_GROUP} \
-        ApachePerl/${perlmod} ${APACHE_CONF}/ApachePerl/${perlmod}
+        ${GIT_ROOT}/ApachePerl/${perlmod} ${APACHE_CONF}/ApachePerl/${perlmod}
 done
