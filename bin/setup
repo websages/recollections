@@ -8,7 +8,7 @@ GIT_ROOT=$(cd $(dirname $0); cd ..; pwd)
 if [ -f /etc/debian_version ];then
   NEED=""
   for pkg in libapache2-mod-perl2; do
-    dpkg -l | grep -q "ii ${pkg} " || NEED="$NEED ${pkg}"
+    dpkg -l | grep -q "^ii *${pkg} " || NEED="$NEED ${pkg}"
   done
   echo "I need [$NEED ]"
   if [ ! -z ${NEED} ]; then
