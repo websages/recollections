@@ -45,6 +45,6 @@ sub handler {
         $bb->insert_tail($b);
     }
 
-    Apache::OK;
+    return Apache2::Const::OK;
 }
 1;
