@@ -40,7 +40,7 @@ for d in data/idx data/cas working; do
     chmod 0755  "${RECOLLECTIONS_ROOT}/${d}"
   fi
 done
-touch "${RECOLLECTIONS_ROOT}/working/README"
+touch "${RECOLLECTIONS_ROOT}/working/.anchor"
 
 SED_RR=$(echo ${RECOLLECTIONS_ROOT}|sed -e 's/\//\\\//g')
 sed -e "s/\[% RECOLLECTIONS_ROOT %\]/${SED_RR}/g"\
