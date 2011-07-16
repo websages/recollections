@@ -31,14 +31,14 @@ sub handler {
         return $rv;
     }
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
-          $b->read(my $data);
-          #warn("data: $data\n");
-          $ctx->{'sha1'}->add($data) if $data;
+        $b->read(my $data);
+        #warn("data: $data\n");
+        $ctx->{'sha1'}->add($data) if $data;
+        if ($f->seen_eos) {
+            print STDERR "digest: ".$ctx->{'sha1'}->hexdigest."\n";
+        }
     }
     # prin to stderr for now, but we need to save this in the request
-    #if ($f->seen_eos) {
-        print STDERR "digest: ".$ctx->{'sha1'}->hexdigest."\n";
-    #}
     $f->ctx($ctx);
     return Apache2::Const::OK;
 }
