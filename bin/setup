@@ -1,5 +1,6 @@
 #!/bin/bash
 RECOLLECTIONS_ROOT="/opt/local/recollections"
+MODPERL_DIR="/opt/local/recollections"
 
 ################################################################################
 if [ -f /etc/debian_version ];then
@@ -10,17 +11,17 @@ if [ -f /etc/debian_version ];then
   if [ ! -z ${NEED} ]; then
     apt-get install -y${NEED} 
   fi
-  APACHE="/etc/apache2"
-   APACHE_USER="www-data"
-   APACHE_group="www-data"
+  APACHE_CONF="/etc/apache2"
+  APACHE_USER="www-data"
+  APACHE_GROUP="www-data"
 fi
 ################################################################################
 if [ -f /etc/redhat_release ];then
    echo "Add RedHat/yum support plz"
    exit 1;
-   APACHE="/etc/httpd"
+   APACHE_CONF="/etc/httpd"
    APACHE_USER="apache"
-   APACHE_group="apache"
+   APACHE_GROUP="apache"
 fi
 
 ################################################################################
@@ -29,10 +30,18 @@ if [ ! -d "${RECOLLECTIONS_ROOT}" ];then
   chown ${APACHE_USER}:${APACHE_GROUP} "${RECOLLECTIONS_ROOT}"
   chmod 0755 "${RECOLLECTIONS_ROOT}"
 fi
-for d in data/idx data/cas; do 
+for d in data/idx data/cas working; do 
   if [ ! -d "${RECOLLECTIONS_ROOT}/${d}" ];then 
     mkdir -p "${RECOLLECTIONS_ROOT}/${d}"
     chown -R ${APACHE_USER}:${APACHE_GROUP} "${RECOLLECTIONS_ROOT}/${d}"
     chmod 0755  "${RECOLLECTIONS_ROOT}/${d}"
   fi
+done
+
+sed -e "s/[% RECOLLECTIONS_ROOT %]/${RECOLLECTIONS_ROOT}/g"\
+     apache/conf.d/recollections_dav.conf.tpl > ${APACHE_CONF}/recollections_dav.conf
+
+for perlmod in AutoDeleteEmpty.pm AutoMKCOL.pm Rewrite_Idx2Cas.pl do
+    install -m 0755 -u ${APACHE_USER} -g ${APACHE_GROUP} \
+        ApachePerl/${perlmod} ${APACHE_CONF}/ApachePerl/${perlmod}
 done

@@ -1,6 +1,6 @@
 loki:
   domain: "root@loki.websages.com"
-  deploy_to: "/var/cache/git"
+  deploy_to: "/var/cache/git/recollections"
   repository: "gitosis@freyr.websages.com:recollections.git"
   branch: "master"
   post_deploy_script: bin/setup
