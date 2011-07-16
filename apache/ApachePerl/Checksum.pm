@@ -31,6 +31,11 @@ sub handler {
     }
 
     my $rv = $f->next->get_brigade($bb, $mode, $block, $readbytes);
+    if($ctx->{'bytes'}){
+        $ctx->{'bytes'}+=$readbytes;
+    }else{
+        $ctx->{'bytes'}=$readbytes;
+    }
     unless($rv == APR::Const::SUCCESS){
         $f->ctx($ctx);
         return $rv;
@@ -45,7 +50,7 @@ sub handler {
     }
     # prin to stderr for now, but we need to save this in the request
     $f->ctx($ctx);
-    print STDERR "chunk $ctx->{'chunk'}\n";
+    print STDERR "chunk $ctx->{'chunk'}: bytes $ctx->{'bytes'}\n";
     return Apache2::Const::OK;
 }
 1;
