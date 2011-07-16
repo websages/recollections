@@ -49,7 +49,7 @@ sub handler {
                     }
                 }
         }
-        if ($r->method() eq "DELETE")
+        if ($r->method() eq "PUT")
         {
              my $notes = $r->notes();
              print STDERR "[".$notes->get("sha1sum")."]\n";
