@@ -24,7 +24,7 @@ sub handler {
     my $c = $filter->c;
     my $bb_ctx = APR::Brigade->new($c->pool, $c->bucket_alloc);
     my $rv = $filter->next->get_brigade($bb_ctx, $mode, $block, $readbytes);
-    return $rv unless $rv == APR::SUCCESS;
+    return $rv unless $rv == APR::Const::SUCCESS;
 
     while (!$bb_ctx->empty) {
         my $b = $bb_ctx->first;
@@ -38,7 +38,7 @@ sub handler {
 
         my $data;
         my $status = $b->read($data);
-        return $status unless $status == APR::SUCCESS;
+        return $status unless $status == APR::Const::SUCCESS;
 
         $b = APR::Bucket->new(lc $data) if $data;
 
