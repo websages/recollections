@@ -57,7 +57,7 @@ sub handler {
              # $link it to it's content.
              link($fullpath,"/opt/local/recollections/data/cas/$sha1sum") unless(-f "/opt/local/recollections/data/cas/$sha1sum");
              open(FILE,">$fullpath");
-             print(<FILE>,$sha1sum);
+             print FILE $sha1sum;
              close(FILE);
         }
         # Allow next handler to run
