@@ -52,8 +52,10 @@ sub handler {
         if ($r->method() eq "PUT")
         {
              my $notes = $r->notes();
-             print STDERR "[".$notes->get("sha1sum")."]\n";
-
+             my $sha1sum = $notes->get("sha1sum");
+             my $fullpath = $r->filename() . $r->path_info();
+             # $link it to it's content.
+             link($fullpath,"/opt/local/recollections/data/cas/$sha1sum") unless(-f "/opt/local/recollections/data/cas/$sha1sum");
  
         }
         # Allow next handler to run
