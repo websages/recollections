@@ -1,8 +1,6 @@
 package ApachePerl::Checksum;
-
 use strict;
 use warnings;
-
 use Apache2::RequestRec ();
 use Apache2::ServerRec ();
 use Apache2::Log ();
@@ -12,7 +10,6 @@ use Apache2::Const -compile => qw(OK DECLINED);
 use APR::Brigade ( );
 use APR::Bucket ( );
 use APR::Table ( );
-
 use Digest::SHA;
 
 sub handler {
@@ -20,6 +17,7 @@ sub handler {
     my $c = $f->c;
     my $r = $f->r;
     my $notes = $r->notes();
+    print STDERR "am i running?\n";
 
     # only process PUTs
     return Apache2::Const::DECLINED unless ($r->method() eq "PUT");
