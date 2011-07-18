@@ -43,6 +43,7 @@ sub handler {
             $ctx->{'sha1'}->add($data);
             print STDERR "seen_eos: ". $f->seen_eos ."\n" if($f->seen_eos);
             my $clone = $ctx->{'sha1'}->clone();
+            print STDERR "hash: ".$clone->hexdigest."\n";
             $notes->set("sha1sum", $clone->hexdigest); # update the APR::Table
         }
     }
