@@ -16,38 +16,38 @@ sub handler {
     return Apache2::Const::DECLINED;
 }
 
-sub parse_uri {
-    my $r = shift;
-    my $hostname = $r->hostname;
-    my $uri = $r->uri;
-    my $query = $r->args;
-   
-    # RewriteCond %{REQUEST_URI} ^/cgi-bin/show_page.pl$
-    # RewriteCond %{QUERY_STRING} ^(.+)$
-    if ($uri =~ /^\/working\/(.+)/){
-        print STDERR "GET ==> /working/$1\n";
-        #$r->headers_out->set('Location' => "http:///show/$1");
-        #$r->status(REDIRECT);
-        #$r->send_http_header;
-        return OK;
-        #return DECLINED;
-    }
-    
-    # RewriteRule ^(.+)$ /show/$1                               [R]   # (rewrite)
-    # RewriteRule ^/show/(.+)$ http://10.15.1.5/long/folder/$1  [P,L] # (proxy, last)
-    if ($uri =~ /^\/cas\/(.+)/){
-        return DECLINED if $r->proxyreq;
-#        $r->proxyreq(1);   # this is equivalent to [P]
-#        $r->args($query);  # this sets the query string
-#        $r->uri("http://$source_url/long/folder/$1");
-#        $r->filename( "proxy:http://$source_url/long/folder/$1" );
-#        $r->handler('proxy-server');
-        return OK;
-    }
-
-    return DECLINED;  # in case neither if()'s validate
-}
-
+#sub parse_uri {
+#    my $r = shift;
+#    my $hostname = $r->hostname;
+#    my $uri = $r->uri;
+#    my $query = $r->args;
+#   
+#    # RewriteCond %{REQUEST_URI} ^/cgi-bin/show_page.pl$
+#    # RewriteCond %{QUERY_STRING} ^(.+)$
+#    if ($uri =~ /^\/working\/(.+)/){
+#        print STDERR "GET ==> /working/$1\n";
+#        #$r->headers_out->set('Location' => "http:///show/$1");
+#        #$r->status(REDIRECT);
+#        #$r->send_http_header;
+#        return OK;
+#        #return DECLINED;
+#    }
+#    
+#    # RewriteRule ^(.+)$ /show/$1                               [R]   # (rewrite)
+#    # RewriteRule ^/show/(.+)$ http://10.15.1.5/long/folder/$1  [P,L] # (proxy, last)
+#    if ($uri =~ /^\/cas\/(.+)/){
+#        return DECLINED if $r->proxyreq;
+##        $r->proxyreq(1);   # this is equivalent to [P]
+##        $r->args($query);  # this sets the query string
+##        $r->uri("http://$source_url/long/folder/$1");
+##        $r->filename( "proxy:http://$source_url/long/folder/$1" );
+##        $r->handler('proxy-server');
+#        return OK;
+#    }
+#
+#    return DECLINED;  # in case neither if()'s validate
+#}
+#
 1;
 
 #$| = 1;
