@@ -4,12 +4,12 @@
 # who can add to a repository, but it works...
 ################################################################################
 
+PerlTransHandler +ApachePerl::CASRewrite
 Alias /working "[% RECOLLECTIONS_ROOT %]/working"
 <Directory "[% RECOLLECTIONS_ROOT %]/working/">
     DAV On
     PerlFixupHandler +ApachePerl::AutoMKCOL
     PerlInputFilterHandler +ApachePerl::Checksum
-    PerlTransHandler +ApachePerl::CASRewrite
     PerlCleanupHandler +ApachePerl::AutoDeleteEmpty
     Options Indexes MultiViews FollowSymLinks
     AllowOverride None
