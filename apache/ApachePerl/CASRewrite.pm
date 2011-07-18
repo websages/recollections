@@ -2,7 +2,7 @@ package ApachePerl::CASRewrite;
 # PerlTransHandler +ApachePerl::CASRewrite
 use strict;
 use warnings;
-use Apache2::RequestRec ();
+use Apache2::RequestRec();
 use APR::Const     -compile => ':common'; # SUCCESS
 use Apache2::Const -compile => qw(OK DECLINED);
 use File::MimeInfo();
@@ -11,6 +11,7 @@ $| = 1;
 
 sub handler {
     my $r = shift;
+    print STDERR "-=[".ref($r)."]=-\n";
     my $reco_root = "/opt/local/recollections";
     if( ($r->method() eq "GET") ||($r->method() eq "HEAD") ){
         my $hash;
