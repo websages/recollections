@@ -11,7 +11,6 @@ if [ -f /etc/debian_version ];then
     dpkg -l | grep -q "^ii *${pkg} " || NEED="$NEED ${pkg}"
   done
   if [ ! -z ${NEED} ]; then
-    echo "I need [$NEED ]"
     apt-get install -y${NEED} 
   fi
   APACHE_CONF="/etc/apache2"
@@ -53,7 +52,7 @@ if [ ! -d "${APACHE_CONF}/ApachePerl" ];then
   chown -R ${APACHE_USER}:${APACHE_GROUP} "${APACHE_CONF}/ApachePerl"
   chmod 0755 "${APACHE_CONF}/ApachePerl"
 fi
-for perlmod in AutoDeleteEmpty.pm AutoMKCOL.pm Checksum.pm Rewrite_Idx2Cas.pl; do
+for perlmod in AutoDeleteEmpty.pm AutoMKCOL.pm Checksum.pm CASRewrite.pm Rewrite_Idx2Cas.pl; do
     install -m 0755 -o ${APACHE_USER} -g ${APACHE_GROUP} \
         ${GIT_ROOT}/apache/ApachePerl/${perlmod} ${APACHE_CONF}/ApachePerl/${perlmod}
 done
