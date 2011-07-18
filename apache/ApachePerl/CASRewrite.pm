@@ -37,6 +37,7 @@ sub parse_uri {
         return OK;
     }
 
+    return OK;
     return DECLINED;  # in case neither if()'s validate
 }
 
