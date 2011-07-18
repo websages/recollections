@@ -11,7 +11,7 @@ $| = 1;
 
 sub handler {
     my $r = shift;
-    my $reco_root = $r->dir_config('Recollections');
+    my $reco_root = "/opt/local/recollections";
     if( ($r->method() eq "GET") ||($r->method() eq "HEAD") ){
         my $hash;
         if( $r->uri =~ m|^/working/(.*)|){
