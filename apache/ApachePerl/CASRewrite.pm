@@ -12,8 +12,7 @@ $| = 1;
 
 sub handler {
     my $r = shift;
-    print STDERR "-=[XXX ".$r->dir_config("Recollections")." XXX]=-\n";
-    my $reco_root = "/opt/local/recollections";
+    my $reco_root = $r->dir_config("Recollections");
     if( ($r->method() eq "GET") ||($r->method() eq "HEAD") ){
         my $hash;
         if( $r->uri =~ m|^/working/(.*)|){
