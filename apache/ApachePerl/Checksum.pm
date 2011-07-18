@@ -17,11 +17,11 @@ sub handler {
     my $c = $f->c;
     my $r = $f->r;
     my $notes = $r->notes();
-    print STDERR "am i running?\n";
 
     # only process PUTs
     return Apache2::Const::DECLINED unless ($r->method() eq "PUT");
 
+    print STDERR "am i running?\n";
     my $ctx = $f->ctx || {}; # set up our context to save our hasher
     unless($ctx->{'sha1'}){
         $ctx->{'sha1'} = Digest::SHA->new('sha1sum');
@@ -37,7 +37,7 @@ sub handler {
         $b->read(my $data);
         if($ctx->{'bytes'}){ $ctx->{'bytes'}+=length($data); }else{ $ctx->{'bytes'}=length($data); }
         if($data){
-            #warn("data: [$data]\n");
+            warn("data: [$data]\n");
             $ctx->{'sha1'}->add($data);
             print STDERR "seen_eos: ". $f->seen_eos ."\n" if($f->seen_eos);
             my $clone = $ctx->{'sha1'}->clone();
