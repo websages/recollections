@@ -5,13 +5,12 @@ use warnings;
 use Apache2::RequestRec ();
 use APR::Const     -compile => ':common'; # SUCCESS
 use Apache2::Const -compile => qw(OK DECLINED);
-use Apache2::Const -compile => qw(DECLINED);
 $| = 1; 
 
 sub handler {
     my $r = shift;
     my ($date, $id, $page) = $r->uri =~ m|^/news/(\d+)/(\d+)/(.*)|;
-    $r->uri("/perl/news.pl");
+    $r->uri("/working");
     $r->args("date=$date;id=$id;page=$page");
     return Apache2::Const::DECLINED;
 }
