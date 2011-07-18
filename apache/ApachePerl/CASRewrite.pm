@@ -11,12 +11,13 @@ $| = 1;
 
 sub handler {
     my $r = shift;
+    my $reco_root = $r->dir_config('Recollections');
     if( ($r->method() eq "GET") ||($r->method() eq "HEAD") ){
         my $hash;
         if( $r->uri =~ m|^/working/(.*)|){
             my ($idx_file) = ($1);
-            if( -f "/opt/local/recollections/working/$idx_file"){
-                open(my $fh, "/opt/local/recollections/working/$idx_file");
+            if( -f "$reco_root/working/$idx_file"){
+                open(my $fh, "$reco_root/working/$idx_file");
                 if($fh){
                     $hash=<$fh>;
                     close ($fh); 
@@ -29,11 +30,11 @@ sub handler {
                     ############################################################                    
                     my $ft = File::Type->new();
                     my $fmi = File::MimeInfo->new();
-                    my $content_type = $ft->checktype_filename("/opt/local/recollections/data/cas/$hash");
+                    my $content_type = $ft->checktype_filename("$reco_root/data/cas/$hash");
                     if($content_type eq "application/octet-stream"){
-                        $content_type = $fmi->mimetype("/opt/local/recollections/data/cas/$hash");
+                        $content_type = $fmi->mimetype("$reco_root/data/cas/$hash");
                     }
-                    print STDERR "[$content_type]\n";
+                    #print STDERR "[$content_type]\n";
                     $r->content_type( $content_type );
                     $r->uri("/cas/$hash");
                 }else{
@@ -45,11 +46,11 @@ sub handler {
             my ($cas_file) = ($1);
             my $ft = File::Type->new();
             my $fmi = File::MimeInfo->new();
-            my $content_type = $ft->checktype_filename("/opt/local/recollections/data/cas/$cas_file");
+            my $content_type = $ft->checktype_filename("$reco_root/data/cas/$cas_file");
             if($content_type eq "application/octet-stream"){
-                $content_type = $fmi->mimetype("/opt/local/recollections/data/cas/$cas_file");
+                $content_type = $fmi->mimetype("$reco_root/data/cas/$cas_file");
             } 
-            print STDERR "[$content_type]\n";
+            #print STDERR "[$content_type]\n";
             $r->content_type( $content_type );
         }
     }

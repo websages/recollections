@@ -23,6 +23,7 @@ use Apache2::Const -compile => qw(DECLINED);
 
 sub handler {
         my $r = shift;
+        my $reco_root = $r->dir_config('Recollections');
 
         # Create directories if processing a put request.
         if ($r->method() eq "DELETE")
@@ -57,8 +58,8 @@ sub handler {
                  print STDERR "sha1sum is [$sha1sum]\n";
                  my $fullpath = $r->filename() . $r->path_info();
                  # $link it to it's content.
-                 print STDERR "Linking /opt/local/recollections/data/cas/$sha1sum -> $fullpath\n";
-                 link($fullpath,"/opt/local/recollections/data/cas/$sha1sum") unless(-f "/opt/local/recollections/data/cas/$sha1sum");
+                 print STDERR "Linking $reco_root/data/cas/$sha1sum -> $fullpath\n";
+                 link($fullpath,"$reco_root/data/cas/$sha1sum") unless(-f "$reco_root/data/cas/$sha1sum");
                  # now remove that link so we can fill it with it's hash
                  print STDERR "Removing $fullpath\n";
                  unlink($fullpath);

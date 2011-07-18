@@ -3,6 +3,8 @@
 # add/remove content it probably needs ldap authentication added, to control 
 # who can add to a repository, but it works...
 ################################################################################
+PerlSetVar Recollections [% RECOLLECTIONS_ROOT %]
+
 PerlTransHandler +ApachePerl::CASRewrite
 
 Alias /working "[% RECOLLECTIONS_ROOT %]/working"
