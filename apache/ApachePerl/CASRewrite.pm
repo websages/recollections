@@ -5,7 +5,7 @@ use warnings;
 use Apache2::RequestRec ();
 use APR::Const     -compile => ':common'; # SUCCESS
 use Apache2::Const -compile => qw(OK DECLINED);
-use File::MimeInfo;
+use File::MimeInfo();
 $| = 1; 
 
 sub handler {
@@ -19,8 +19,9 @@ sub handler {
                 if($fh){
                     $hash=<$fh>;
                     close ($fh); 
-                    print STDERR "[".$mimetype("/opt/local/recollections/data/cas/$hash")."]\n";
-                    $r->content_type( $mimetype("/opt/local/recollections/data/cas/$hash") );
+                    my $m = File::MimeInfo->new();
+                    print STDERR "[".$m->mimetype("/opt/local/recollections/data/cas/$hash")."]\n";
+                    $r->content_type( $m->mimetype("/opt/local/recollections/data/cas/$hash") );
                     $r->uri("/cas/$hash");
                 }else{
                     $r->uri("/working");
