@@ -1,5 +1,6 @@
 package ApachePerl::CASRewrite;
-use Apache::Constants qw( :common REDIRECT );
+use APR::Const     -compile => ':common'; # SUCCESS
+use Apache2::Const -compile => qw(OK DECLINED);
 # PerlTransHandler +ApachePerl::CASRewrite
 $| = 1; 
 
