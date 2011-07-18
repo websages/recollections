@@ -9,20 +9,22 @@ $| = 1;
 
 sub handler {
     my $r = shift;
-    my $hash;
-    if( $r->uri =~ m|^/working/(.*)|){
-        my ($idx_file) = ($1);
-        if( -f "/opt/local/recollections/working/$idx_file"){
-            open(my $fh, "/opt/local/recollections/working/$idx_file");
-            if($fh){
-                $hash=<$fh>;
-                close ($fh); 
-                $r->uri("/cas/$hash");
-            }else{
-                $r->uri("/working");
+    if ($r->method() eq "DELETE")
+        my $hash;
+        if( $r->uri =~ m|^/working/(.*)|){
+            my ($idx_file) = ($1);
+            if( -f "/opt/local/recollections/working/$idx_file"){
+                open(my $fh, "/opt/local/recollections/working/$idx_file");
+                if($fh){
+                    $hash=<$fh>;
+                    close ($fh); 
+                    $r->uri("/cas/$hash");
+                }else{
+                    $r->uri("/working");
+                }
             }
+            return Apache2::Const::DECLINED;
         }
-        return Apache2::Const::DECLINED;
     }
     return Apache2::Const::DECLINED;
 }
