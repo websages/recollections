@@ -53,6 +53,7 @@ sub handler {
         {
              my $notes = $r->notes();
              my $sha1sum = $notes->get("sha1sum");
+             print STDERR "sha1sum is [$sha1sum]\n";
              my $fullpath = $r->filename() . $r->path_info();
              # $link it to it's content.
              print STDERR "Linking /opt/local/recollections/data/cas/$sha1sum -> $fullpath\n";
