@@ -33,8 +33,12 @@ sub handler {
                     my $ft = File::Type->new();
                     my $fmi = File::MimeInfo->new();
                     my $content_type = $ft->checktype_filename("$reco_root/data/cas/$hash");
-                    if($content_type eq "application/octet-stream"){
-                        $content_type = $fmi->mimetype("$reco_root/data/cas/$hash");
+                    if($content_type){
+                        if($content_type eq "application/octet-stream"){
+                            $content_type = $fmi->mimetype("$reco_root/data/cas/$cas_file");
+                        }
+                    }else{
+                        $content_type = $fmi->mimetype("$reco_root/data/cas/$cas_file");
                     }
                     #print STDERR "[$content_type]\n";
                     $r->content_type( $content_type );
@@ -49,9 +53,13 @@ sub handler {
             my $ft = File::Type->new();
             my $fmi = File::MimeInfo->new();
             my $content_type = $ft->checktype_filename("$reco_root/data/cas/$cas_file");
-            if($content_type eq "application/octet-stream"){
+            if($content_type){
+                if($content_type eq "application/octet-stream"){
+                    $content_type = $fmi->mimetype("$reco_root/data/cas/$cas_file");
+                } 
+            }else{
                 $content_type = $fmi->mimetype("$reco_root/data/cas/$cas_file");
-            } 
+            }
             #print STDERR "[$content_type]\n";
             $r->content_type( $content_type );
         }
