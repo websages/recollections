@@ -10,7 +10,7 @@ $| = 1;
 
 sub handler {
     my $r = shift;
-    if ($r->method() eq "GET"){
+    if( ($r->method() eq "GET") ||($r->method() eq "HEAD") ){
         my $hash;
         if( $r->uri =~ m|^/working/(.*)|){
             my ($idx_file) = ($1);
