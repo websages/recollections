@@ -21,7 +21,7 @@ sub handler {
                     close ($fh); 
                     my $ft = File::Type->new();
                     print STDERR $ft->checktype_filename("/opt/local/recollections/data/cas/$hash");
-                    $r->uri("/cas/$hash");DELETE
+                    $r->uri("/cas/$hash");
                 }else{
                     $r->uri("/working");
                 }
