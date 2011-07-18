@@ -3,8 +3,8 @@
 # add/remove content it probably needs ldap authentication added, to control 
 # who can add to a repository, but it works...
 ################################################################################
+#PerlTransHandler +ApachePerl::CASRewrite
 
-PerlTransHandler +ApachePerl::CASRewrite
 Alias /working "[% RECOLLECTIONS_ROOT %]/working"
 <Directory "[% RECOLLECTIONS_ROOT %]/working/">
     DAV On
