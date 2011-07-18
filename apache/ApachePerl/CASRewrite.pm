@@ -9,9 +9,12 @@ $| = 1;
 
 sub handler {
     my $r = shift;
-    my ($date, $id, $page) = $r->uri =~ m|^/news/(\d+)/(\d+)/(.*)|;
-    $r->uri("/working");
-    $r->args("date=$date;id=$id;page=$page");
+    if( $r->uri =~ m|^/news/(\d+)/(\d+)/(.*)|){
+        my ($date, $id, $page) = ($1, $2, $3);
+        $r->uri("/working");
+        $r->args("date=$date;id=$id;page=$page");
+        return Apache2::Const::DECLINED;
+    }
     return Apache2::Const::DECLINED;
 }
 
