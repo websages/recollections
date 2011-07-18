@@ -7,6 +7,7 @@ use APR::Const     -compile => ':common'; # SUCCESS
 use Apache2::Const -compile => qw(OK DECLINED);
 use File::MimeInfo();
 use File::Type();
+use Data::Dumper;
 $| = 1; 
 
 sub handler {
