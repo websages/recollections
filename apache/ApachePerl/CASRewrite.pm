@@ -9,10 +9,14 @@ $| = 1;
 
 sub handler {
     my $r = shift;
-    if( $r->uri =~ m|^/news/(\d+)/(\d+)/(.*)|){
-        my ($date, $id, $page) = ($1, $2, $3);
-        $r->uri("/working");
-        $r->args("date=$date;id=$id;page=$page");
+    if( $r->uri =~ m|^/working/(.*)|){
+        my ($idx_file) = ($1);
+        if( -f /opt/local/recollections/working/$idx_file){
+            open(my $fh, "/opt/local/recollections/working/$idx_file");
+            my $hash=<$fh>;
+            close ($fh); 
+        }
+        $r->uri("/cas/$hash");
         return Apache2::Const::DECLINED;
     }
     return Apache2::Const::DECLINED;
