@@ -1,14 +1,19 @@
 package ApachePerl::CASRewrite;
+# PerlTransHandler +ApachePerl::CASRewrite
+use strict;
+use warnings;
+use Apache2::RequestRec ();
 use APR::Const     -compile => ':common'; # SUCCESS
 use Apache2::Const -compile => qw(OK DECLINED);
-# PerlTransHandler +ApachePerl::CASRewrite
+use Apache2::Const -compile => qw(DECLINED);
 $| = 1; 
 
 sub handler {
     my $r = shift;
-    #$r->filename($r->document_root . $r->uri); 
-    return OK; 
-    #return &parse_uri($r);
+    my ($date, $id, $page) = $r->uri =~ m|^/news/(\d+)/(\d+)/(.*)|;
+    $r->uri("/perl/news.pl");
+    $r->args("date=$date;id=$id;page=$page");
+    return Apache2::Const::DECLINED;
 }
 
 sub parse_uri {
