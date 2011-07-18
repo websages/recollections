@@ -20,7 +20,7 @@ sub handler {
                     $hash=<$fh>;
                     close ($fh); 
                     my $ft = File::Type->new();
-                    $r->content_type($ft);
+                    $r->content_type( $ft->checktype_filename("/opt/local/recollections/data/cas/$hash") );
                     $r->uri("/cas/$hash");
                 }else{
                     $r->uri("/working");
