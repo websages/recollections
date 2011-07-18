@@ -17,7 +17,7 @@ sub parse_uri {
    
     # RewriteCond %{REQUEST_URI} ^/cgi-bin/show_page.pl$
     # RewriteCond %{QUERY_STRING} ^(.+)$
-    if ($uri =~ /^\/cgi-bin\/show_page.pl$/ && $query =~ /^(.+)$/){
+    if ($uri =~ /^\/data\/idx\/(.+)/){
         $r->headers_out->set('Location' => "http://www.adamovsky.com/show/$1");
         $r->status(REDIRECT);
         $r->send_http_header;

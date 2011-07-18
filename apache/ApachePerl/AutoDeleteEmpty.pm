@@ -56,6 +56,9 @@ sub handler {
              my $fullpath = $r->filename() . $r->path_info();
              # $link it to it's content.
              link($fullpath,"/opt/local/recollections/data/cas/$sha1sum") unless(-f "/opt/local/recollections/data/cas/$sha1sum");
+             # now remove that link so we can fill it with it's hash
+             unlink($fullpath);
+             # fill it with it's hash
              open(FILE,">$fullpath");
              print FILE $sha1sum;
              close(FILE);
