@@ -9,14 +9,19 @@ $| = 1;
 
 sub handler {
     my $r = shift;
+    my $hash;
     if( $r->uri =~ m|^/working/(.*)|){
         my ($idx_file) = ($1);
-        if( -f /opt/local/recollections/working/$idx_file){
+        if( -f "/opt/local/recollections/working/$idx_file"){
             open(my $fh, "/opt/local/recollections/working/$idx_file");
-            my $hash=<$fh>;
-            close ($fh); 
+            if($fh){
+                $hash=<$fh>;
+                close ($fh); 
+                $r->uri("/cas/$hash");
+            }else{
+                $r->uri("/working");
+            }
         }
-        $r->uri("/cas/$hash");
         return Apache2::Const::DECLINED;
     }
     return Apache2::Const::DECLINED;
