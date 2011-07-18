@@ -21,7 +21,6 @@ sub handler {
     # only process PUTs
     return Apache2::Const::DECLINED unless ($r->method() eq "PUT");
 
-    print STDERR "am i running?\n";
     my $ctx = $f->ctx || {}; # set up our context to save our hasher
     unless($ctx->{'sha1'}){
         $ctx->{'sha1'} = Digest::SHA->new('sha1sum');
