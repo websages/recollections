@@ -9,7 +9,7 @@ $| = 1;
 
 sub handler {
     my $r = shift;
-    if ($r->method() eq "DELETE")
+    if ($r->method() eq "GET"){
         my $hash;
         if( $r->uri =~ m|^/working/(.*)|){
             my ($idx_file) = ($1);
