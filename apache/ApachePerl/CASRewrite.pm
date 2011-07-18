@@ -5,6 +5,7 @@ use warnings;
 use Apache2::RequestRec ();
 use APR::Const     -compile => ':common'; # SUCCESS
 use Apache2::Const -compile => qw(OK DECLINED);
+use File::Type;
 $| = 1; 
 
 sub handler {
@@ -18,7 +19,9 @@ sub handler {
                 if($fh){
                     $hash=<$fh>;
                     close ($fh); 
-                    $r->uri("/cas/$hash");
+                    my $ft = File::Type->new();
+                    print STDERR $ft->checktype_filename("/opt/local/recollections/data/cas/$hash");
+                    $r->uri("/cas/$hash");DELETE
                 }else{
                     $r->uri("/working");
                 }
