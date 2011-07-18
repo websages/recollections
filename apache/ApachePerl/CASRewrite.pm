@@ -1,8 +1,7 @@
 package ApachePerl::CASRewrite;
 use Apache::Constants qw( :common REDIRECT );
-# PerlTransHandler RewriteModule
+# PerlTransHandler +ApachePerl::CASRewrite
 $| = 1; 
-my $source_url = 'http://127.0.0.1';  # have this reflect your private IP
 
 sub handler {
     my $r = shift;
@@ -17,22 +16,23 @@ sub parse_uri {
    
     # RewriteCond %{REQUEST_URI} ^/cgi-bin/show_page.pl$
     # RewriteCond %{QUERY_STRING} ^(.+)$
-    if ($uri =~ /^\/data\/idx\/(.+)/){
-        $r->headers_out->set('Location' => "http://www.adamovsky.com/show/$1");
-        $r->status(REDIRECT);
-        $r->send_http_header;
+    if ($uri =~ /^\/working\/(.+)/){
+        print STDERR "GET ==> /working/$1\n";
+        #$r->headers_out->set('Location' => "http:///show/$1");
+        #$r->status(REDIRECT);
+        #$r->send_http_header;
         return DECLINED;
     }
     
     # RewriteRule ^(.+)$ /show/$1                               [R]   # (rewrite)
     # RewriteRule ^/show/(.+)$ http://10.15.1.5/long/folder/$1  [P,L] # (proxy, last)
-    if ($uri =~ /^\/data_cas\/(.+)/){
+    if ($uri =~ /^\/cas\/(.+)/){
         return DECLINED if $r->proxyreq;
-        $r->proxyreq(1);   # this is equivalent to [P]
-        $r->args($query);  # this sets the query string
-        $r->uri("http://$source_url/long/folder/$1");
-        $r->filename( "proxy:http://$source_url/long/folder/$1" );
-        $r->handler('proxy-server');
+#        $r->proxyreq(1);   # this is equivalent to [P]
+#        $r->args($query);  # this sets the query string
+#        $r->uri("http://$source_url/long/folder/$1");
+#        $r->filename( "proxy:http://$source_url/long/folder/$1" );
+#        $r->handler('proxy-server');
         return OK;
     }
 

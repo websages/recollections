@@ -9,6 +9,7 @@ Alias /working "[% RECOLLECTIONS_ROOT %]/working"
     DAV On
     PerlFixupHandler +ApachePerl::AutoMKCOL
     PerlInputFilterHandler +ApachePerl::Checksum
+    PerlTransHandler +ApachePerl::CASRewrite
     PerlCleanupHandler +ApachePerl::AutoDeleteEmpty
     Options Indexes MultiViews FollowSymLinks
     AllowOverride None
