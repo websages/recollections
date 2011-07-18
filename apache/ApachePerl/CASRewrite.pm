@@ -22,7 +22,8 @@ sub parse_uri {
         #$r->headers_out->set('Location' => "http:///show/$1");
         #$r->status(REDIRECT);
         #$r->send_http_header;
-        return DECLINED;
+        return OK;
+        #return DECLINED;
     }
     
     # RewriteRule ^(.+)$ /show/$1                               [R]   # (rewrite)
@@ -37,7 +38,6 @@ sub parse_uri {
         return OK;
     }
 
-    return OK;
     return DECLINED;  # in case neither if()'s validate
 }
 
