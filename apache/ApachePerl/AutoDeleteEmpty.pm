@@ -55,10 +55,13 @@ sub handler {
              my $sha1sum = $notes->get("sha1sum");
              my $fullpath = $r->filename() . $r->path_info();
              # $link it to it's content.
+             print STDERR "Linking /opt/local/recollections/data/cas/$sha1sum -> $fullpath\n";
              link($fullpath,"/opt/local/recollections/data/cas/$sha1sum") unless(-f "/opt/local/recollections/data/cas/$sha1sum");
              # now remove that link so we can fill it with it's hash
+             print STDERR "Removing $fullpath\n";
              unlink($fullpath);
              # fill it with it's hash
+             print STDERR "Putting '$sha1sum' into $fullpath\n";
              open(FILE,">$fullpath");
              print FILE $sha1sum;
              close(FILE);
