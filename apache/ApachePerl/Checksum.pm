@@ -46,7 +46,7 @@ sub handler {
         }
     }
     $f->ctx($ctx);
-    #print STDERR "chunk $ctx->{'chunk'}: bytes $ctx->{'bytes'} / $readbytes\n";
+    print STDERR "chunk $ctx->{'chunk'}: bytes $ctx->{'bytes'} / $readbytes\n";
     return Apache2::Const::OK;
 }
 1;
