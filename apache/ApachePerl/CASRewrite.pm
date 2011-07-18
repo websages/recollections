@@ -20,7 +20,7 @@ sub handler {
                 if($fh){
                     $hash=<$fh>;
                     close ($fh); 
-                    my $ft = File::type->new();
+                    my $ft = File::Type->new();
                     my $fmi = File::MimeInfo->new();
                     my $content_type = $ft->checktype_filename("/opt/local/recollections/data/cas/$hash");
                     if($content_type eq "application/octet-stream"){
