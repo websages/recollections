@@ -23,7 +23,7 @@ use Apache2::Const -compile => qw(DECLINED);
 
 sub handler {
         my $r = shift;
-        #my $reco_root = $r->dir_config('Recollections');
+        my $reco_root = $r->dir_config("Recollections");
         my $reco_root = "/opt/local/recollections";
 
         # Create directories if processing a put request.
