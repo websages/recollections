@@ -1,7 +1,7 @@
     PerlModule Apache2::S3;
     PerlTransHandler Apache2::S3
 
-    PerlSetVar S3Key [% AWS_ACCESS_KEY %]
+    PerlSetVar S3Key [% AWS_ACCESS_KEY_ID %]
     PerlSetVar S3Secret [% AWS_SECRET_ACCESS_KEY %]
     PerlSetVar S3Map '/s3/ => jw.o-incoming'
 
