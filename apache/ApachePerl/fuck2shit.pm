@@ -1,4 +1,4 @@
-package ApachePerl::Checksum;
+package ApachePerl::fuck2shit;
 
 use strict;
 use warnings;
