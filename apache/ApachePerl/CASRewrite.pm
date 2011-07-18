@@ -12,7 +12,7 @@ $| = 1;
 sub handler {
     my $r = shift;
     my @blarg = @_;
-    print STDERR "-=[".join(' | ',@blarg )."]=-\n";
+    print STDERR "-=[".$ref( $r->per_dir_config() )."]=-\n";
     my $reco_root = "/opt/local/recollections";
     if( ($r->method() eq "GET") ||($r->method() eq "HEAD") ){
         my $hash;
