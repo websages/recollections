@@ -35,13 +35,13 @@ sub handler {
                     my $content_type = $ft->checktype_filename("$reco_root/data/cas/$hash");
                     if($content_type){
                         if($content_type eq "application/octet-stream"){
-                            $content_type = $fmi->mimetype("$reco_root/data/cas/$cas_file");
+                            $content_type = $fmi->mimetype("$reco_root/data/cas/$hash");
                         }
                     }else{
-                        $content_type = $fmi->mimetype("$reco_root/data/cas/$cas_file");
+                        $content_type = $fmi->mimetype("$reco_root/data/cas/$hash");
                     }
                     #print STDERR "[$content_type]\n";
-                    $r->content_type( $content_type );
+                    $r->content_type( $content_type ) if($content_type);
                     $r->uri("/cas/$hash");
                 }else{
                     $r->uri("/working");
@@ -61,7 +61,7 @@ sub handler {
                 $content_type = $fmi->mimetype("$reco_root/data/cas/$cas_file");
             }
             #print STDERR "[$content_type]\n";
-            $r->content_type( $content_type );
+            $r->content_type( $content_type ) if($content_type);
         }
     }
     return Apache2::Const::DECLINED;
