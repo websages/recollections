@@ -20,6 +20,13 @@ sub handler {
                 if($fh){
                     $hash=<$fh>;
                     close ($fh); 
+                    ############################################################                    
+                    # It's awesomes that this is necessary
+                    # File::Type returns image/jpeg as application/octet-stream
+                    # File::MimeInfo returns ascii text as application/octet-stream
+                    # so if one returns application/octet-stream, use the other.
+                    # ugh.
+                    ############################################################                    
                     my $ft = File::Type->new();
                     my $fmi = File::MimeInfo->new();
                     my $content_type = $ft->checktype_filename("/opt/local/recollections/data/cas/$hash");
@@ -34,6 +41,16 @@ sub handler {
                 }
             }
             return Apache2::Const::DECLINED;
+        }elsif( $r->uri =~ m|^/cas/(.*)|){
+            my ($cas_file) = ($1);
+            my $ft = File::Type->new();
+            my $fmi = File::MimeInfo->new();
+            my $content_type = $ft->checktype_filename("/opt/local/recollections/data/cas/$cas_file");
+            if($content_type eq "application/octet-stream"){
+                $content_type = $fmi->mimetype("/opt/local/recollections/data/cas/$cas_file");
+            } 
+            print STDERR "[$content_type]\n";
+            $r->content_type( $content_type );
         }
     }
     return Apache2::Const::DECLINED;
