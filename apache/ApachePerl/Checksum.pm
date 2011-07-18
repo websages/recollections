@@ -37,7 +37,7 @@ sub handler {
         $b->read(my $data);
         if($ctx->{'bytes'}){ $ctx->{'bytes'}+=length($data); }else{ $ctx->{'bytes'}=length($data); }
         if($data){
-            warn("data: [$data]\n");
+            #warn("data: [$data]\n");
             $ctx->{'sha1'}->add($data);
             print STDERR "seen_eos: ". $f->seen_eos ."\n" if($f->seen_eos);
             my $clone = $ctx->{'sha1'}->clone();
@@ -46,7 +46,7 @@ sub handler {
         }
     }
     $f->ctx($ctx);
-    print STDERR "chunk $ctx->{'chunk'}: bytes $ctx->{'bytes'} / $readbytes\n";
+    #print STDERR "chunk $ctx->{'chunk'}: bytes $ctx->{'bytes'} / $readbytes\n";
     return Apache2::Const::OK;
 }
 1;
