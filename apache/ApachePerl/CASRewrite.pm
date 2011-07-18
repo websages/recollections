@@ -6,7 +6,9 @@ $| = 1;
 
 sub handler {
     my $r = shift;
-    return &parse_uri($r);
+    #$r->filename($r->document_root . $r->uri); 
+    return OK; 
+    #return &parse_uri($r);
 }
 
 sub parse_uri {
