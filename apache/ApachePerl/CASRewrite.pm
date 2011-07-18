@@ -11,7 +11,8 @@ $| = 1;
 
 sub handler {
     my $r = shift;
-    print STDERR "-=[".ref($r)."]=-\n";
+    my @blarg = @_;
+    print STDERR "-=[".join(' | ',@blarg )."]=-\n";
     my $reco_root = "/opt/local/recollections";
     if( ($r->method() eq "GET") ||($r->method() eq "HEAD") ){
         my $hash;
