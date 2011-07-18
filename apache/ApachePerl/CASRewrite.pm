@@ -12,7 +12,7 @@ $| = 1;
 
 sub handler {
     my $r = shift;
-    my @blarg = @_;
+    print STDERR "-=[XXX ".$r->dir_config("Recollections")." XXX]=-\n";
     my $reco_root = "/opt/local/recollections";
     if( ($r->method() eq "GET") ||($r->method() eq "HEAD") ){
         my $hash;
